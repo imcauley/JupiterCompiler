@@ -1,0 +1,19 @@
+int main() {
+    int mynum = 5;
+    boolean mybool = false;
+
+    34
+
+    // this is a test comment
+    if((mynum == mybool) && mybool) {
+        prints("test");
+    }
+}
+// this is a test comment
+
+###
+huge mult
+i line
+int
+comment
+###

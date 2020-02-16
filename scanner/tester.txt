@@ -1,4 +1,0 @@
-int main() {
-    int mynum = 5;
-    int mystr = "test";
-}
