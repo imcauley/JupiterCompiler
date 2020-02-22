@@ -1,2 +1,3 @@
-./scanner/lex.yy.c
+*yy*
+*.o
 ./scanner/scanner

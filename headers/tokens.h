@@ -14,8 +14,11 @@ typedef enum{
     SEMICOLON,
     COMMA,
 
-    INT_OP,
-    BOOL_OP_BIN,
+    INT_EQ_OP,
+    INT_ADD_OP,
+    INT_MULT_OP,
+    BOOL_OP_ADD,
+    BOOL_OP_OR,
     BOOL_OP_UN,
     EQUALITY,
     ASSIGNMENT,
@@ -26,11 +29,11 @@ typedef enum{
     STR_LIT,
     INT_LIT,
 
-    IF_TOK,
-    ELSE_TOK,
-    WHILE_TOK,
-    BREAK_TOK,
-    RETURN_TOK
+    IF,
+    ELSE,
+    WHILE,
+    BREAK,
+    RETURN
 } Token;
 
 void output_token(Token t, int lineno, const char* text);
