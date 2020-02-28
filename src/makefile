@@ -12,7 +12,7 @@ CFLAGS	= -g -Wall -ansi -pedantic -I$(HEAD_DIR) -Wno-write-strings
 OBJS	= $(BIN_DIR)bison.o $(BIN_DIR)lex.o $(BIN_DIR)main.o $(BIN_DIR)tokens.o $(BIN_DIR)ast.o $(BIN_DIR)token_map.o
 
 compiler:		$(OBJS)
-		$(CC) -DYYDEBUG $(CFLAGS) $(OBJS) -o $(BIN_DIR)compiler -lfl
+		$(CC) -DYYDEBUG $(CFLAGS) $(OBJS) -o ../compiler -lfl
 
 $(BIN_DIR)lex.o:	lex.yy.c
 		$(CC) $(CFLAGS) -c $(SCANNER_DIR)lex.yy.c -o $(BIN_DIR)lex.o
