@@ -1,0 +1,51 @@
+const char* get_token_name(int token) {
+ switch(token) {
+case 258: return "INT_DEC";
+case 259: return "BOOL_DEC";
+case 260: return "NUMBER";
+case 261: return "STRING";
+case 262: return "BOOL";
+case 263: return "VOID";
+case 264: return "OPEN_PAREN";
+case 265: return "END_PAREN";
+case 266: return "OPEN_BRACE";
+case 267: return "END_BRACE";
+case 268: return "SEMICOLON";
+case 269: return "COMMA";
+case 270: return "MULT";
+case 271: return "DIV";
+case 272: return "MOD";
+case 273: return "ADD";
+case 274: return "SUB";
+case 275: return "GT";
+case 276: return "LT";
+case 277: return "GTE";
+case 278: return "LTE";
+case 279: return "EQ";
+case 280: return "NEQ";
+case 281: return "NEG";
+case 282: return "NOT";
+case 283: return "AND";
+case 284: return "OR";
+case 285: return "ASSIGNMENT";
+case 286: return "IDENTIFIER";
+case 287: return "IF";
+case 288: return "ELSE";
+case 289: return "WHILE";
+case 290: return "BREAK";
+case 291: return "RETURN";
+case 292: return "NO_TYPE";
+case 293: return "VAR_DEC";
+case 294: return "GLOBAL_DEC";
+case 295: return "FUNC_DEC";
+case 296: return "FUNC_DECL";
+case 297: return "FUNC_HEAD";
+case 298: return "MAIN_FUNC";
+case 299: return "ARG_LIST";
+case 300: return "FUNC_INVOKE";
+case 301: return "BLOCK_STATE";
+case 302: return "PARAM_LIST";
+case 303: return "BLOCK";
+default: return "ERROR";
+} 
+}

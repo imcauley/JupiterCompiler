@@ -34,13 +34,13 @@
 # define YY_YY_PARSER_PARSE_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
-# define YYDEBUG 0
+# define YYDEBUG 1
 #endif
 #if YYDEBUG
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 17 "./parser/parse.y" /* yacc.c:1910  */
+#line 22 "./parser/parse.y" /* yacc.c:1910  */
 
   #include "ast.h"
 
@@ -51,30 +51,52 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    TYPE_DEF_TOK = 0,
-    OPEN_PAREN_TOK = 1,
-    END_PAREN_TOK = 2,
-    OPEN_BRACE_TOK = 3,
-    END_BRACE_TOK = 4,
-    SEMICOLON_TOK = 5,
-    COMMA_TOK = 6,
-    INT_EQ_OP_TOK = 7,
-    INT_ADD_OP_TOK = 8,
-    INT_MULT_OP_TOK = 9,
-    BOOL_OP_ADD_TOK = 10,
-    BOOL_OP_OR_TOK = 11,
-    BOOL_OP_UN_TOK = 12,
-    EQUALITY_TOK = 13,
-    ASSIGNMENT_TOK = 14,
-    IDENTIFIER_TOK = 15,
-    BOOL_LIT_TOK = 16,
-    STR_LIT_TOK = 17,
-    INT_LIT_TOK = 18,
-    IF_TOK = 19,
-    ELSE_TOK = 20,
-    WHILE_TOK = 21,
-    BREAK_TOK = 22,
-    RETURN_TOK = 23
+    INT_DEC = 258,
+    BOOL_DEC = 259,
+    NUMBER = 260,
+    STRING = 261,
+    BOOL = 262,
+    VOID = 263,
+    OPEN_PAREN = 264,
+    END_PAREN = 265,
+    OPEN_BRACE = 266,
+    END_BRACE = 267,
+    SEMICOLON = 268,
+    COMMA = 269,
+    MULT = 270,
+    DIV = 271,
+    MOD = 272,
+    ADD = 273,
+    SUB = 274,
+    GT = 275,
+    LT = 276,
+    GTE = 277,
+    LTE = 278,
+    EQ = 279,
+    NEQ = 280,
+    NEG = 281,
+    NOT = 282,
+    AND = 283,
+    OR = 284,
+    ASSIGNMENT = 285,
+    IDENTIFIER = 286,
+    IF = 287,
+    ELSE = 288,
+    WHILE = 289,
+    BREAK = 290,
+    RETURN = 291,
+    NO_TYPE = 292,
+    VAR_DEC = 293,
+    GLOBAL_DEC = 294,
+    FUNC_DEC = 295,
+    FUNC_DECL = 296,
+    FUNC_HEAD = 297,
+    MAIN_FUNC = 298,
+    ARG_LIST = 299,
+    FUNC_INVOKE = 300,
+    BLOCK_STATE = 301,
+    PARAM_LIST = 302,
+    BLOCK = 303
   };
 #endif
 
@@ -83,13 +105,12 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 21 "./parser/parse.y" /* yacc.c:1910  */
+#line 27 "./parser/parse.y" /* yacc.c:1910  */
 
-  int value;
-  char name[64];
+  char *name;
   AST * tree;
 
-#line 93 "./parser/parse.tab.h" /* yacc.c:1910  */
+#line 114 "./parser/parse.tab.h" /* yacc.c:1910  */
 };
 
 typedef union YYSTYPE YYSTYPE;

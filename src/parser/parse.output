@@ -1,1470 +1,1803 @@
 Terminals unused in grammar
 
-   BOOL_OP_UN_TOK
+   NO_TYPE
+   VAR_DEC
+   GLOBAL_DEC
+   FUNC_DEC
+   FUNC_DECL
+   FUNC_HEAD
+   MAIN_FUNC
+   ARG_LIST
+   FUNC_INVOKE
+   BLOCK_STATE
+   PARAM_LIST
+   BLOCK
 
 
-Rules useless in parser due to conflicts
-
-    1 start: %empty
-    2      | globaldeclarations
-
-
-State 0 conflicts: 1 shift/reduce
-State 6 conflicts: 1 shift/reduce
-State 107 conflicts: 1 shift/reduce
+State 123 conflicts: 1 shift/reduce
 
 
 Grammar
 
-    0 $accept: start TYPE_DEF_TOK
+    0 $accept: start $end
 
     1 start: %empty
     2      | globaldeclarations
 
-    3 literal: BOOL_LIT_TOK
-    4        | STR_LIT_TOK
-    5        | INT_LIT_TOK
+    3 literal: NUMBER
+    4        | STRING
+    5        | BOOL
+    6        | VOID
 
-    6 type: TYPE_DEF_TOK
+    7 type: BOOL_DEC
+    8     | INT_DEC
 
-    7 identifier: IDENTIFIER_TOK
+    9 globaldeclarations: globaldeclaration
+   10                   | globaldeclarations globaldeclaration
 
-    8 globaldeclarations: globaldeclaration
-    9                   | globaldeclarations globaldeclaration
+   11 globaldeclaration: variabledeclaration
+   12                  | functiondeclaration
+   13                  | mainfunctiondeclaration
 
-   10 globaldeclaration: variabledeclaration
-   11                  | functiondeclaration
-   12                  | mainfunctiondeclaration
+   14 variabledeclaration: type identifier SEMICOLON
 
-   13 variabledeclaration: type identifier SEMICOLON_TOK
+   15 identifier: IDENTIFIER
 
-   14 functiondeclaration: functionheader block
+   16 mainfunctiondeclaration: mainfunctiondeclarator block
 
-   15 functionheader: type functiondeclarator
+   17 mainfunctiondeclarator: identifier OPEN_PAREN END_PAREN
 
-   16 functiondeclarator: identifier OPEN_PAREN_TOK formalparameterlist END_PAREN_TOK
-   17                   | identifier OPEN_PAREN_TOK END_PAREN_TOK
+   18 functiondeclaration: functionheader block
 
-   18 formalparameterlist: formalparameter
-   19                    | formalparameterlist COMMA_TOK formalparameter
+   19 functionheader: type functiondeclarator
 
-   20 formalparameter: type identifier
+   20 functiondeclarator: identifier OPEN_PAREN formalparameterlist END_PAREN
+   21                   | identifier OPEN_PAREN END_PAREN
 
-   21 mainfunctiondeclaration: mainfunctiondeclarator block
+   22 formalparameterlist: formalparameter
+   23                    | formalparameterlist COMMA formalparameter
 
-   22 mainfunctiondeclarator: identifier OPEN_PAREN_TOK END_PAREN_TOK
+   24 formalparameter: type identifier
 
-   23 block: OPEN_BRACE_TOK blockstatements END_BRACE_TOK
-   24      | OPEN_BRACE_TOK END_BRACE_TOK
+   25 block: OPEN_BRACE blockstatements END_BRACE
+   26      | OPEN_BRACE END_BRACE
 
-   25 blockstatements: blockstatement
-   26                | blockstatements blockstatement
+   27 blockstatements: blockstatement
+   28                | blockstatements blockstatement
 
-   27 blockstatement: variabledeclaration
-   28               | statement
+   29 blockstatement: variabledeclaration
+   30               | statement
 
-   29 statement: block
-   30          | SEMICOLON_TOK
-   31          | statementexpression SEMICOLON_TOK
-   32          | BREAK_TOK SEMICOLON_TOK
-   33          | RETURN_TOK expression SEMICOLON_TOK
-   34          | RETURN_TOK SEMICOLON_TOK
-   35          | IF_TOK OPEN_PAREN_TOK expression END_PAREN_TOK statement
-   36          | IF_TOK OPEN_PAREN_TOK expression END_PAREN_TOK statement ELSE_TOK statement
-   37          | WHILE_TOK OPEN_PAREN_TOK expression END_PAREN_TOK statement
+   31 statement: block
+   32          | SEMICOLON
+   33          | statementexpression SEMICOLON
+   34          | BREAK SEMICOLON
+   35          | RETURN expression SEMICOLON
+   36          | RETURN SEMICOLON
+   37          | IF OPEN_PAREN expression END_PAREN statement
+   38          | IF OPEN_PAREN expression END_PAREN statement ELSE statement
+   39          | WHILE OPEN_PAREN expression END_PAREN statement
 
-   38 statementexpression: assignment
-   39                    | functioninvocation
+   40 statementexpression: assignment
+   41                    | functioninvocation
 
-   40 primary: literal
-   41        | OPEN_PAREN_TOK expression END_PAREN_TOK
-   42        | functioninvocation
+   42 primary: literal
+   43        | OPEN_PAREN expression END_PAREN
+   44        | functioninvocation
 
-   43 argumentlist: expression
-   44             | argumentlist COMMA_TOK expression
+   45 argumentlist: expression
+   46             | argumentlist COMMA expression
 
-   45 functioninvocation: identifier OPEN_PAREN_TOK argumentlist END_PAREN_TOK
-   46                   | identifier OPEN_PAREN_TOK END_PAREN_TOK
+   47 functioninvocation: identifier OPEN_PAREN argumentlist END_PAREN
+   48                   | identifier OPEN_PAREN END_PAREN
 
-   47 postfixexpression: primary
-   48                  | identifier
+   49 postfixexpression: primary
+   50                  | identifier
 
-   49 unaryexpression: '-' unaryexpression
-   50                | '!' unaryexpression
-   51                | postfixexpression
+   51 unaryexpression: NEG unaryexpression
+   52                | NOT unaryexpression
+   53                | postfixexpression
 
-   52 multiplicativeexpression: unaryexpression
-   53                         | multiplicativeexpression INT_MULT_OP_TOK unaryexpression
+   54 multiplicativeexpression: unaryexpression
+   55                         | multiplicativeexpression MULT unaryexpression
+   56                         | multiplicativeexpression DIV unaryexpression
+   57                         | multiplicativeexpression MOD unaryexpression
 
-   54 additiveexpression: multiplicativeexpression
-   55                   | additiveexpression INT_ADD_OP_TOK multiplicativeexpression
+   58 additiveexpression: multiplicativeexpression
+   59                   | additiveexpression ADD multiplicativeexpression
+   60                   | additiveexpression SUB multiplicativeexpression
 
-   56 relationalexpression: additiveexpression
-   57                     | relationalexpression INT_EQ_OP_TOK additiveexpression
+   61 relationalexpression: additiveexpression
+   62                     | relationalexpression LT additiveexpression
+   63                     | relationalexpression GT additiveexpression
+   64                     | relationalexpression LTE additiveexpression
+   65                     | relationalexpression GTE additiveexpression
 
-   58 equalityexpression: relationalexpression
-   59                   | equalityexpression EQUALITY_TOK relationalexpression
+   66 equalityexpression: relationalexpression
+   67                   | equalityexpression EQ relationalexpression
+   68                   | equalityexpression NEQ relationalexpression
 
-   60 conditionalandexpression: equalityexpression
-   61                         | conditionalandexpression BOOL_OP_ADD_TOK equalityexpression
+   69 conditionalandexpression: equalityexpression
+   70                         | conditionalandexpression AND equalityexpression
 
-   62 conditionalorexpression: conditionalandexpression
-   63                        | conditionalorexpression BOOL_OP_OR_TOK conditionalandexpression
+   71 conditionalorexpression: conditionalandexpression
+   72                        | conditionalorexpression OR conditionalandexpression
 
-   64 assignmentexpression: conditionalorexpression
-   65                     | assignment
+   73 assignmentexpression: conditionalorexpression
+   74                     | assignment
 
-   66 assignment: identifier ASSIGNMENT_TOK assignmentexpression
+   75 assignment: identifier ASSIGNMENT assignmentexpression
 
-   67 expression: assignmentexpression
+   76 expression: assignmentexpression
 
 
 Terminals, with rules where they appear
 
-TYPE_DEF_TOK (0) 0 6
-OPEN_PAREN_TOK (1) 16 17 22 35 36 37 41 45 46
-END_PAREN_TOK (2) 16 17 22 35 36 37 41 45 46
-OPEN_BRACE_TOK (3) 23 24
-END_BRACE_TOK (4) 23 24
-SEMICOLON_TOK (5) 13 30 31 32 33 34
-COMMA_TOK (6) 19 44
-INT_EQ_OP_TOK (7) 57
-INT_ADD_OP_TOK (8) 55
-INT_MULT_OP_TOK (9) 53
-BOOL_OP_ADD_TOK (10) 61
-BOOL_OP_OR_TOK (11) 63
-BOOL_OP_UN_TOK (12)
-EQUALITY_TOK (13) 59
-ASSIGNMENT_TOK (14) 66
-IDENTIFIER_TOK (15) 7
-BOOL_LIT_TOK (16) 3
-STR_LIT_TOK (17) 4
-INT_LIT_TOK (18) 5
-IF_TOK (19) 35 36
-ELSE_TOK (20) 36
-WHILE_TOK (21) 37
-BREAK_TOK (22) 32
-RETURN_TOK (23) 33 34
-'!' (33) 50
-'-' (45) 49
+$end (0) 0
 error (256)
+INT_DEC (258) 8
+BOOL_DEC (259) 7
+NUMBER (260) 3
+STRING (261) 4
+BOOL (262) 5
+VOID (263) 6
+OPEN_PAREN (264) 17 20 21 37 38 39 43 47 48
+END_PAREN (265) 17 20 21 37 38 39 43 47 48
+OPEN_BRACE (266) 25 26
+END_BRACE (267) 25 26
+SEMICOLON (268) 14 32 33 34 35 36
+COMMA (269) 23 46
+MULT (270) 55
+DIV (271) 56
+MOD (272) 57
+ADD (273) 59
+SUB (274) 60
+GT (275) 63
+LT (276) 62
+GTE (277) 65
+LTE (278) 64
+EQ (279) 67
+NEQ (280) 68
+NEG (281) 51
+NOT (282) 52
+AND (283) 70
+OR (284) 72
+ASSIGNMENT (285) 75
+IDENTIFIER (286) 15
+IF (287) 37 38
+ELSE (288) 38
+WHILE (289) 39
+BREAK (290) 34
+RETURN (291) 35 36
+NO_TYPE (292)
+VAR_DEC (293)
+GLOBAL_DEC (294)
+FUNC_DEC (295)
+FUNC_DECL (296)
+FUNC_HEAD (297)
+MAIN_FUNC (298)
+ARG_LIST (299)
+FUNC_INVOKE (300)
+BLOCK_STATE (301)
+PARAM_LIST (302)
+BLOCK (303)
 
 
 Nonterminals, with rules where they appear
 
-$accept (28)
+$accept (49)
     on left: 0
-start (29)
+start (50)
     on left: 1 2, on right: 0
-literal (30)
-    on left: 3 4 5, on right: 40
-type (31)
-    on left: 6, on right: 13 15 20
-identifier (32)
-    on left: 7, on right: 13 16 17 20 22 45 46 48 66
-globaldeclarations (33)
-    on left: 8 9, on right: 2 9
-globaldeclaration (34)
-    on left: 10 11 12, on right: 8 9
-variabledeclaration (35)
-    on left: 13, on right: 10 27
-functiondeclaration (36)
-    on left: 14, on right: 11
-functionheader (37)
-    on left: 15, on right: 14
-functiondeclarator (38)
-    on left: 16 17, on right: 15
-formalparameterlist (39)
-    on left: 18 19, on right: 16 19
-formalparameter (40)
-    on left: 20, on right: 18 19
-mainfunctiondeclaration (41)
-    on left: 21, on right: 12
-mainfunctiondeclarator (42)
-    on left: 22, on right: 21
-block (43)
-    on left: 23 24, on right: 14 21 29
-blockstatements (44)
-    on left: 25 26, on right: 23 26
-blockstatement (45)
-    on left: 27 28, on right: 25 26
-statement (46)
-    on left: 29 30 31 32 33 34 35 36 37, on right: 28 35 36 37
-statementexpression (47)
-    on left: 38 39, on right: 31
-primary (48)
-    on left: 40 41 42, on right: 47
-argumentlist (49)
-    on left: 43 44, on right: 44 45
-functioninvocation (50)
-    on left: 45 46, on right: 39 42
-postfixexpression (51)
-    on left: 47 48, on right: 51
-unaryexpression (52)
-    on left: 49 50 51, on right: 49 50 52 53
-multiplicativeexpression (53)
-    on left: 52 53, on right: 53 54 55
-additiveexpression (54)
-    on left: 54 55, on right: 55 56 57
-relationalexpression (55)
-    on left: 56 57, on right: 57 58 59
-equalityexpression (56)
-    on left: 58 59, on right: 59 60 61
-conditionalandexpression (57)
-    on left: 60 61, on right: 61 62 63
-conditionalorexpression (58)
-    on left: 62 63, on right: 63 64
-assignmentexpression (59)
-    on left: 64 65, on right: 66 67
-assignment (60)
-    on left: 66, on right: 38 65
-expression (61)
-    on left: 67, on right: 33 35 36 37 41 43 44
+literal (51)
+    on left: 3 4 5 6, on right: 42
+type (52)
+    on left: 7 8, on right: 14 19 24
+globaldeclarations (53)
+    on left: 9 10, on right: 2 10
+globaldeclaration (54)
+    on left: 11 12 13, on right: 9 10
+variabledeclaration (55)
+    on left: 14, on right: 11 29
+identifier (56)
+    on left: 15, on right: 14 17 20 21 24 47 48 50 75
+mainfunctiondeclaration (57)
+    on left: 16, on right: 13
+mainfunctiondeclarator (58)
+    on left: 17, on right: 16
+functiondeclaration (59)
+    on left: 18, on right: 12
+functionheader (60)
+    on left: 19, on right: 18
+functiondeclarator (61)
+    on left: 20 21, on right: 19
+formalparameterlist (62)
+    on left: 22 23, on right: 20 23
+formalparameter (63)
+    on left: 24, on right: 22 23
+block (64)
+    on left: 25 26, on right: 16 18 31
+blockstatements (65)
+    on left: 27 28, on right: 25 28
+blockstatement (66)
+    on left: 29 30, on right: 27 28
+statement (67)
+    on left: 31 32 33 34 35 36 37 38 39, on right: 30 37 38 39
+statementexpression (68)
+    on left: 40 41, on right: 33
+primary (69)
+    on left: 42 43 44, on right: 49
+argumentlist (70)
+    on left: 45 46, on right: 46 47
+functioninvocation (71)
+    on left: 47 48, on right: 41 44
+postfixexpression (72)
+    on left: 49 50, on right: 53
+unaryexpression (73)
+    on left: 51 52 53, on right: 51 52 54 55 56 57
+multiplicativeexpression (74)
+    on left: 54 55 56 57, on right: 55 56 57 58 59 60
+additiveexpression (75)
+    on left: 58 59 60, on right: 59 60 61 62 63 64 65
+relationalexpression (76)
+    on left: 61 62 63 64 65, on right: 62 63 64 65 66 67 68
+equalityexpression (77)
+    on left: 66 67 68, on right: 67 68 69 70
+conditionalandexpression (78)
+    on left: 69 70, on right: 70 71 72
+conditionalorexpression (79)
+    on left: 71 72, on right: 72 73
+assignmentexpression (80)
+    on left: 73 74, on right: 75 76
+assignment (81)
+    on left: 75, on right: 40 74
+expression (82)
+    on left: 76, on right: 35 37 38 39 43 45 46
 
 
 State 0
 
-    0 $accept: . start TYPE_DEF_TOK
+    0 $accept: . start $end
 
-    TYPE_DEF_TOK    shift, and go to state 1
-    IDENTIFIER_TOK  shift, and go to state 2
+    INT_DEC     shift, and go to state 1
+    BOOL_DEC    shift, and go to state 2
+    IDENTIFIER  shift, and go to state 3
 
-    TYPE_DEF_TOK  [reduce using rule 1 (start)]
+    $default  reduce using rule 1 (start)
 
-    start                    go to state 3
-    type                     go to state 4
-    identifier               go to state 5
+    start                    go to state 4
+    type                     go to state 5
     globaldeclarations       go to state 6
     globaldeclaration        go to state 7
     variabledeclaration      go to state 8
-    functiondeclaration      go to state 9
-    functionheader           go to state 10
-    mainfunctiondeclaration  go to state 11
-    mainfunctiondeclarator   go to state 12
+    identifier               go to state 9
+    mainfunctiondeclaration  go to state 10
+    mainfunctiondeclarator   go to state 11
+    functiondeclaration      go to state 12
+    functionheader           go to state 13
 
 
 State 1
 
-    6 type: TYPE_DEF_TOK .
+    8 type: INT_DEC .
 
-    $default  reduce using rule 6 (type)
+    $default  reduce using rule 8 (type)
 
 
 State 2
 
-    7 identifier: IDENTIFIER_TOK .
+    7 type: BOOL_DEC .
 
-    $default  reduce using rule 7 (identifier)
+    $default  reduce using rule 7 (type)
 
 
 State 3
 
-    0 $accept: start . TYPE_DEF_TOK
+   15 identifier: IDENTIFIER .
 
-    TYPE_DEF_TOK  shift, and go to state 13
+    $default  reduce using rule 15 (identifier)
 
 
 State 4
 
-   13 variabledeclaration: type . identifier SEMICOLON_TOK
-   15 functionheader: type . functiondeclarator
+    0 $accept: start . $end
 
-    IDENTIFIER_TOK  shift, and go to state 2
-
-    identifier          go to state 14
-    functiondeclarator  go to state 15
+    $end  shift, and go to state 14
 
 
 State 5
 
-   22 mainfunctiondeclarator: identifier . OPEN_PAREN_TOK END_PAREN_TOK
+   14 variabledeclaration: type . identifier SEMICOLON
+   19 functionheader: type . functiondeclarator
 
-    OPEN_PAREN_TOK  shift, and go to state 16
+    IDENTIFIER  shift, and go to state 3
+
+    identifier          go to state 15
+    functiondeclarator  go to state 16
 
 
 State 6
 
     2 start: globaldeclarations .
-    9 globaldeclarations: globaldeclarations . globaldeclaration
+   10 globaldeclarations: globaldeclarations . globaldeclaration
 
-    TYPE_DEF_TOK    shift, and go to state 1
-    IDENTIFIER_TOK  shift, and go to state 2
+    INT_DEC     shift, and go to state 1
+    BOOL_DEC    shift, and go to state 2
+    IDENTIFIER  shift, and go to state 3
 
-    TYPE_DEF_TOK  [reduce using rule 2 (start)]
+    $default  reduce using rule 2 (start)
 
-    type                     go to state 4
-    identifier               go to state 5
+    type                     go to state 5
     globaldeclaration        go to state 17
     variabledeclaration      go to state 8
-    functiondeclaration      go to state 9
-    functionheader           go to state 10
-    mainfunctiondeclaration  go to state 11
-    mainfunctiondeclarator   go to state 12
+    identifier               go to state 9
+    mainfunctiondeclaration  go to state 10
+    mainfunctiondeclarator   go to state 11
+    functiondeclaration      go to state 12
+    functionheader           go to state 13
 
 
 State 7
 
-    8 globaldeclarations: globaldeclaration .
-
-    $default  reduce using rule 8 (globaldeclarations)
-
-
-State 8
-
-   10 globaldeclaration: variabledeclaration .
-
-    $default  reduce using rule 10 (globaldeclaration)
-
-
-State 9
-
-   11 globaldeclaration: functiondeclaration .
-
-    $default  reduce using rule 11 (globaldeclaration)
-
-
-State 10
-
-   14 functiondeclaration: functionheader . block
-
-    OPEN_BRACE_TOK  shift, and go to state 18
-
-    block  go to state 19
-
-
-State 11
-
-   12 globaldeclaration: mainfunctiondeclaration .
-
-    $default  reduce using rule 12 (globaldeclaration)
-
-
-State 12
-
-   21 mainfunctiondeclaration: mainfunctiondeclarator . block
-
-    OPEN_BRACE_TOK  shift, and go to state 18
-
-    block  go to state 20
-
-
-State 13
-
-    0 $accept: start TYPE_DEF_TOK .
-
-    $default  accept
-
-
-State 14
-
-   13 variabledeclaration: type identifier . SEMICOLON_TOK
-   16 functiondeclarator: identifier . OPEN_PAREN_TOK formalparameterlist END_PAREN_TOK
-   17                   | identifier . OPEN_PAREN_TOK END_PAREN_TOK
-
-    OPEN_PAREN_TOK  shift, and go to state 21
-    SEMICOLON_TOK   shift, and go to state 22
-
-
-State 15
-
-   15 functionheader: type functiondeclarator .
-
-    $default  reduce using rule 15 (functionheader)
-
-
-State 16
-
-   22 mainfunctiondeclarator: identifier OPEN_PAREN_TOK . END_PAREN_TOK
-
-    END_PAREN_TOK  shift, and go to state 23
-
-
-State 17
-
-    9 globaldeclarations: globaldeclarations globaldeclaration .
+    9 globaldeclarations: globaldeclaration .
 
     $default  reduce using rule 9 (globaldeclarations)
 
 
+State 8
+
+   11 globaldeclaration: variabledeclaration .
+
+    $default  reduce using rule 11 (globaldeclaration)
+
+
+State 9
+
+   17 mainfunctiondeclarator: identifier . OPEN_PAREN END_PAREN
+
+    OPEN_PAREN  shift, and go to state 18
+
+
+State 10
+
+   13 globaldeclaration: mainfunctiondeclaration .
+
+    $default  reduce using rule 13 (globaldeclaration)
+
+
+State 11
+
+   16 mainfunctiondeclaration: mainfunctiondeclarator . block
+
+    OPEN_BRACE  shift, and go to state 19
+
+    block  go to state 20
+
+
+State 12
+
+   12 globaldeclaration: functiondeclaration .
+
+    $default  reduce using rule 12 (globaldeclaration)
+
+
+State 13
+
+   18 functiondeclaration: functionheader . block
+
+    OPEN_BRACE  shift, and go to state 19
+
+    block  go to state 21
+
+
+State 14
+
+    0 $accept: start $end .
+
+    $default  accept
+
+
+State 15
+
+   14 variabledeclaration: type identifier . SEMICOLON
+   20 functiondeclarator: identifier . OPEN_PAREN formalparameterlist END_PAREN
+   21                   | identifier . OPEN_PAREN END_PAREN
+
+    OPEN_PAREN  shift, and go to state 22
+    SEMICOLON   shift, and go to state 23
+
+
+State 16
+
+   19 functionheader: type functiondeclarator .
+
+    $default  reduce using rule 19 (functionheader)
+
+
+State 17
+
+   10 globaldeclarations: globaldeclarations globaldeclaration .
+
+    $default  reduce using rule 10 (globaldeclarations)
+
+
 State 18
 
-   23 block: OPEN_BRACE_TOK . blockstatements END_BRACE_TOK
-   24      | OPEN_BRACE_TOK . END_BRACE_TOK
+   17 mainfunctiondeclarator: identifier OPEN_PAREN . END_PAREN
 
-    TYPE_DEF_TOK    shift, and go to state 1
-    OPEN_BRACE_TOK  shift, and go to state 18
-    END_BRACE_TOK   shift, and go to state 24
-    SEMICOLON_TOK   shift, and go to state 25
-    IDENTIFIER_TOK  shift, and go to state 2
-    IF_TOK          shift, and go to state 26
-    WHILE_TOK       shift, and go to state 27
-    BREAK_TOK       shift, and go to state 28
-    RETURN_TOK      shift, and go to state 29
-
-    type                 go to state 30
-    identifier           go to state 31
-    variabledeclaration  go to state 32
-    block                go to state 33
-    blockstatements      go to state 34
-    blockstatement       go to state 35
-    statement            go to state 36
-    statementexpression  go to state 37
-    functioninvocation   go to state 38
-    assignment           go to state 39
+    END_PAREN  shift, and go to state 24
 
 
 State 19
 
-   14 functiondeclaration: functionheader block .
+   25 block: OPEN_BRACE . blockstatements END_BRACE
+   26      | OPEN_BRACE . END_BRACE
 
-    $default  reduce using rule 14 (functiondeclaration)
+    INT_DEC     shift, and go to state 1
+    BOOL_DEC    shift, and go to state 2
+    OPEN_BRACE  shift, and go to state 19
+    END_BRACE   shift, and go to state 25
+    SEMICOLON   shift, and go to state 26
+    IDENTIFIER  shift, and go to state 3
+    IF          shift, and go to state 27
+    WHILE       shift, and go to state 28
+    BREAK       shift, and go to state 29
+    RETURN      shift, and go to state 30
+
+    type                 go to state 31
+    variabledeclaration  go to state 32
+    identifier           go to state 33
+    block                go to state 34
+    blockstatements      go to state 35
+    blockstatement       go to state 36
+    statement            go to state 37
+    statementexpression  go to state 38
+    functioninvocation   go to state 39
+    assignment           go to state 40
 
 
 State 20
 
-   21 mainfunctiondeclaration: mainfunctiondeclarator block .
+   16 mainfunctiondeclaration: mainfunctiondeclarator block .
 
-    $default  reduce using rule 21 (mainfunctiondeclaration)
+    $default  reduce using rule 16 (mainfunctiondeclaration)
 
 
 State 21
 
-   16 functiondeclarator: identifier OPEN_PAREN_TOK . formalparameterlist END_PAREN_TOK
-   17                   | identifier OPEN_PAREN_TOK . END_PAREN_TOK
+   18 functiondeclaration: functionheader block .
 
-    TYPE_DEF_TOK   shift, and go to state 1
-    END_PAREN_TOK  shift, and go to state 40
-
-    type                 go to state 41
-    formalparameterlist  go to state 42
-    formalparameter      go to state 43
+    $default  reduce using rule 18 (functiondeclaration)
 
 
 State 22
 
-   13 variabledeclaration: type identifier SEMICOLON_TOK .
+   20 functiondeclarator: identifier OPEN_PAREN . formalparameterlist END_PAREN
+   21                   | identifier OPEN_PAREN . END_PAREN
 
-    $default  reduce using rule 13 (variabledeclaration)
+    INT_DEC    shift, and go to state 1
+    BOOL_DEC   shift, and go to state 2
+    END_PAREN  shift, and go to state 41
+
+    type                 go to state 42
+    formalparameterlist  go to state 43
+    formalparameter      go to state 44
 
 
 State 23
 
-   22 mainfunctiondeclarator: identifier OPEN_PAREN_TOK END_PAREN_TOK .
+   14 variabledeclaration: type identifier SEMICOLON .
 
-    $default  reduce using rule 22 (mainfunctiondeclarator)
+    $default  reduce using rule 14 (variabledeclaration)
 
 
 State 24
 
-   24 block: OPEN_BRACE_TOK END_BRACE_TOK .
+   17 mainfunctiondeclarator: identifier OPEN_PAREN END_PAREN .
 
-    $default  reduce using rule 24 (block)
+    $default  reduce using rule 17 (mainfunctiondeclarator)
 
 
 State 25
 
-   30 statement: SEMICOLON_TOK .
+   26 block: OPEN_BRACE END_BRACE .
 
-    $default  reduce using rule 30 (statement)
+    $default  reduce using rule 26 (block)
 
 
 State 26
 
-   35 statement: IF_TOK . OPEN_PAREN_TOK expression END_PAREN_TOK statement
-   36          | IF_TOK . OPEN_PAREN_TOK expression END_PAREN_TOK statement ELSE_TOK statement
-
-    OPEN_PAREN_TOK  shift, and go to state 44
-
-
-State 27
-
-   37 statement: WHILE_TOK . OPEN_PAREN_TOK expression END_PAREN_TOK statement
-
-    OPEN_PAREN_TOK  shift, and go to state 45
-
-
-State 28
-
-   32 statement: BREAK_TOK . SEMICOLON_TOK
-
-    SEMICOLON_TOK  shift, and go to state 46
-
-
-State 29
-
-   33 statement: RETURN_TOK . expression SEMICOLON_TOK
-   34          | RETURN_TOK . SEMICOLON_TOK
-
-    OPEN_PAREN_TOK  shift, and go to state 47
-    SEMICOLON_TOK   shift, and go to state 48
-    IDENTIFIER_TOK  shift, and go to state 2
-    BOOL_LIT_TOK    shift, and go to state 49
-    STR_LIT_TOK     shift, and go to state 50
-    INT_LIT_TOK     shift, and go to state 51
-    '-'             shift, and go to state 52
-    '!'             shift, and go to state 53
-
-    literal                   go to state 54
-    identifier                go to state 55
-    primary                   go to state 56
-    functioninvocation        go to state 57
-    postfixexpression         go to state 58
-    unaryexpression           go to state 59
-    multiplicativeexpression  go to state 60
-    additiveexpression        go to state 61
-    relationalexpression      go to state 62
-    equalityexpression        go to state 63
-    conditionalandexpression  go to state 64
-    conditionalorexpression   go to state 65
-    assignmentexpression      go to state 66
-    assignment                go to state 67
-    expression                go to state 68
-
-
-State 30
-
-   13 variabledeclaration: type . identifier SEMICOLON_TOK
-
-    IDENTIFIER_TOK  shift, and go to state 2
-
-    identifier  go to state 69
-
-
-State 31
-
-   45 functioninvocation: identifier . OPEN_PAREN_TOK argumentlist END_PAREN_TOK
-   46                   | identifier . OPEN_PAREN_TOK END_PAREN_TOK
-   66 assignment: identifier . ASSIGNMENT_TOK assignmentexpression
-
-    OPEN_PAREN_TOK  shift, and go to state 70
-    ASSIGNMENT_TOK  shift, and go to state 71
-
-
-State 32
-
-   27 blockstatement: variabledeclaration .
-
-    $default  reduce using rule 27 (blockstatement)
-
-
-State 33
-
-   29 statement: block .
-
-    $default  reduce using rule 29 (statement)
-
-
-State 34
-
-   23 block: OPEN_BRACE_TOK blockstatements . END_BRACE_TOK
-   26 blockstatements: blockstatements . blockstatement
-
-    TYPE_DEF_TOK    shift, and go to state 1
-    OPEN_BRACE_TOK  shift, and go to state 18
-    END_BRACE_TOK   shift, and go to state 72
-    SEMICOLON_TOK   shift, and go to state 25
-    IDENTIFIER_TOK  shift, and go to state 2
-    IF_TOK          shift, and go to state 26
-    WHILE_TOK       shift, and go to state 27
-    BREAK_TOK       shift, and go to state 28
-    RETURN_TOK      shift, and go to state 29
-
-    type                 go to state 30
-    identifier           go to state 31
-    variabledeclaration  go to state 32
-    block                go to state 33
-    blockstatement       go to state 73
-    statement            go to state 36
-    statementexpression  go to state 37
-    functioninvocation   go to state 38
-    assignment           go to state 39
-
-
-State 35
-
-   25 blockstatements: blockstatement .
-
-    $default  reduce using rule 25 (blockstatements)
-
-
-State 36
-
-   28 blockstatement: statement .
-
-    $default  reduce using rule 28 (blockstatement)
-
-
-State 37
-
-   31 statement: statementexpression . SEMICOLON_TOK
-
-    SEMICOLON_TOK  shift, and go to state 74
-
-
-State 38
-
-   39 statementexpression: functioninvocation .
-
-    $default  reduce using rule 39 (statementexpression)
-
-
-State 39
-
-   38 statementexpression: assignment .
-
-    $default  reduce using rule 38 (statementexpression)
-
-
-State 40
-
-   17 functiondeclarator: identifier OPEN_PAREN_TOK END_PAREN_TOK .
-
-    $default  reduce using rule 17 (functiondeclarator)
-
-
-State 41
-
-   20 formalparameter: type . identifier
-
-    IDENTIFIER_TOK  shift, and go to state 2
-
-    identifier  go to state 75
-
-
-State 42
-
-   16 functiondeclarator: identifier OPEN_PAREN_TOK formalparameterlist . END_PAREN_TOK
-   19 formalparameterlist: formalparameterlist . COMMA_TOK formalparameter
-
-    END_PAREN_TOK  shift, and go to state 76
-    COMMA_TOK      shift, and go to state 77
-
-
-State 43
-
-   18 formalparameterlist: formalparameter .
-
-    $default  reduce using rule 18 (formalparameterlist)
-
-
-State 44
-
-   35 statement: IF_TOK OPEN_PAREN_TOK . expression END_PAREN_TOK statement
-   36          | IF_TOK OPEN_PAREN_TOK . expression END_PAREN_TOK statement ELSE_TOK statement
-
-    OPEN_PAREN_TOK  shift, and go to state 47
-    IDENTIFIER_TOK  shift, and go to state 2
-    BOOL_LIT_TOK    shift, and go to state 49
-    STR_LIT_TOK     shift, and go to state 50
-    INT_LIT_TOK     shift, and go to state 51
-    '-'             shift, and go to state 52
-    '!'             shift, and go to state 53
-
-    literal                   go to state 54
-    identifier                go to state 55
-    primary                   go to state 56
-    functioninvocation        go to state 57
-    postfixexpression         go to state 58
-    unaryexpression           go to state 59
-    multiplicativeexpression  go to state 60
-    additiveexpression        go to state 61
-    relationalexpression      go to state 62
-    equalityexpression        go to state 63
-    conditionalandexpression  go to state 64
-    conditionalorexpression   go to state 65
-    assignmentexpression      go to state 66
-    assignment                go to state 67
-    expression                go to state 78
-
-
-State 45
-
-   37 statement: WHILE_TOK OPEN_PAREN_TOK . expression END_PAREN_TOK statement
-
-    OPEN_PAREN_TOK  shift, and go to state 47
-    IDENTIFIER_TOK  shift, and go to state 2
-    BOOL_LIT_TOK    shift, and go to state 49
-    STR_LIT_TOK     shift, and go to state 50
-    INT_LIT_TOK     shift, and go to state 51
-    '-'             shift, and go to state 52
-    '!'             shift, and go to state 53
-
-    literal                   go to state 54
-    identifier                go to state 55
-    primary                   go to state 56
-    functioninvocation        go to state 57
-    postfixexpression         go to state 58
-    unaryexpression           go to state 59
-    multiplicativeexpression  go to state 60
-    additiveexpression        go to state 61
-    relationalexpression      go to state 62
-    equalityexpression        go to state 63
-    conditionalandexpression  go to state 64
-    conditionalorexpression   go to state 65
-    assignmentexpression      go to state 66
-    assignment                go to state 67
-    expression                go to state 79
-
-
-State 46
-
-   32 statement: BREAK_TOK SEMICOLON_TOK .
+   32 statement: SEMICOLON .
 
     $default  reduce using rule 32 (statement)
 
 
-State 47
+State 27
 
-   41 primary: OPEN_PAREN_TOK . expression END_PAREN_TOK
+   37 statement: IF . OPEN_PAREN expression END_PAREN statement
+   38          | IF . OPEN_PAREN expression END_PAREN statement ELSE statement
 
-    OPEN_PAREN_TOK  shift, and go to state 47
-    IDENTIFIER_TOK  shift, and go to state 2
-    BOOL_LIT_TOK    shift, and go to state 49
-    STR_LIT_TOK     shift, and go to state 50
-    INT_LIT_TOK     shift, and go to state 51
-    '-'             shift, and go to state 52
-    '!'             shift, and go to state 53
+    OPEN_PAREN  shift, and go to state 45
 
-    literal                   go to state 54
-    identifier                go to state 55
-    primary                   go to state 56
-    functioninvocation        go to state 57
-    postfixexpression         go to state 58
-    unaryexpression           go to state 59
-    multiplicativeexpression  go to state 60
-    additiveexpression        go to state 61
-    relationalexpression      go to state 62
-    equalityexpression        go to state 63
-    conditionalandexpression  go to state 64
-    conditionalorexpression   go to state 65
-    assignmentexpression      go to state 66
-    assignment                go to state 67
-    expression                go to state 80
 
+State 28
 
-State 48
+   39 statement: WHILE . OPEN_PAREN expression END_PAREN statement
 
-   34 statement: RETURN_TOK SEMICOLON_TOK .
+    OPEN_PAREN  shift, and go to state 46
 
-    $default  reduce using rule 34 (statement)
 
+State 29
 
-State 49
+   34 statement: BREAK . SEMICOLON
 
-    3 literal: BOOL_LIT_TOK .
+    SEMICOLON  shift, and go to state 47
 
-    $default  reduce using rule 3 (literal)
 
+State 30
 
-State 50
+   35 statement: RETURN . expression SEMICOLON
+   36          | RETURN . SEMICOLON
 
-    4 literal: STR_LIT_TOK .
+    NUMBER      shift, and go to state 48
+    STRING      shift, and go to state 49
+    BOOL        shift, and go to state 50
+    VOID        shift, and go to state 51
+    OPEN_PAREN  shift, and go to state 52
+    SEMICOLON   shift, and go to state 53
+    NEG         shift, and go to state 54
+    NOT         shift, and go to state 55
+    IDENTIFIER  shift, and go to state 3
 
-    $default  reduce using rule 4 (literal)
+    literal                   go to state 56
+    identifier                go to state 57
+    primary                   go to state 58
+    functioninvocation        go to state 59
+    postfixexpression         go to state 60
+    unaryexpression           go to state 61
+    multiplicativeexpression  go to state 62
+    additiveexpression        go to state 63
+    relationalexpression      go to state 64
+    equalityexpression        go to state 65
+    conditionalandexpression  go to state 66
+    conditionalorexpression   go to state 67
+    assignmentexpression      go to state 68
+    assignment                go to state 69
+    expression                go to state 70
 
 
-State 51
+State 31
 
-    5 literal: INT_LIT_TOK .
+   14 variabledeclaration: type . identifier SEMICOLON
 
-    $default  reduce using rule 5 (literal)
+    IDENTIFIER  shift, and go to state 3
 
+    identifier  go to state 71
 
-State 52
 
-   49 unaryexpression: '-' . unaryexpression
+State 32
 
-    OPEN_PAREN_TOK  shift, and go to state 47
-    IDENTIFIER_TOK  shift, and go to state 2
-    BOOL_LIT_TOK    shift, and go to state 49
-    STR_LIT_TOK     shift, and go to state 50
-    INT_LIT_TOK     shift, and go to state 51
-    '-'             shift, and go to state 52
-    '!'             shift, and go to state 53
+   29 blockstatement: variabledeclaration .
 
-    literal             go to state 54
-    identifier          go to state 81
-    primary             go to state 56
-    functioninvocation  go to state 57
-    postfixexpression   go to state 58
-    unaryexpression     go to state 82
+    $default  reduce using rule 29 (blockstatement)
 
 
-State 53
+State 33
 
-   50 unaryexpression: '!' . unaryexpression
+   47 functioninvocation: identifier . OPEN_PAREN argumentlist END_PAREN
+   48                   | identifier . OPEN_PAREN END_PAREN
+   75 assignment: identifier . ASSIGNMENT assignmentexpression
 
-    OPEN_PAREN_TOK  shift, and go to state 47
-    IDENTIFIER_TOK  shift, and go to state 2
-    BOOL_LIT_TOK    shift, and go to state 49
-    STR_LIT_TOK     shift, and go to state 50
-    INT_LIT_TOK     shift, and go to state 51
-    '-'             shift, and go to state 52
-    '!'             shift, and go to state 53
+    OPEN_PAREN  shift, and go to state 72
+    ASSIGNMENT  shift, and go to state 73
 
-    literal             go to state 54
-    identifier          go to state 81
-    primary             go to state 56
-    functioninvocation  go to state 57
-    postfixexpression   go to state 58
-    unaryexpression     go to state 83
 
+State 34
 
-State 54
-
-   40 primary: literal .
-
-    $default  reduce using rule 40 (primary)
-
-
-State 55
-
-   45 functioninvocation: identifier . OPEN_PAREN_TOK argumentlist END_PAREN_TOK
-   46                   | identifier . OPEN_PAREN_TOK END_PAREN_TOK
-   48 postfixexpression: identifier .
-   66 assignment: identifier . ASSIGNMENT_TOK assignmentexpression
-
-    OPEN_PAREN_TOK  shift, and go to state 70
-    ASSIGNMENT_TOK  shift, and go to state 71
-
-    $default  reduce using rule 48 (postfixexpression)
-
-
-State 56
-
-   47 postfixexpression: primary .
-
-    $default  reduce using rule 47 (postfixexpression)
-
-
-State 57
-
-   42 primary: functioninvocation .
-
-    $default  reduce using rule 42 (primary)
-
-
-State 58
-
-   51 unaryexpression: postfixexpression .
-
-    $default  reduce using rule 51 (unaryexpression)
-
-
-State 59
-
-   52 multiplicativeexpression: unaryexpression .
-
-    $default  reduce using rule 52 (multiplicativeexpression)
-
-
-State 60
-
-   53 multiplicativeexpression: multiplicativeexpression . INT_MULT_OP_TOK unaryexpression
-   54 additiveexpression: multiplicativeexpression .
-
-    INT_MULT_OP_TOK  shift, and go to state 84
-
-    $default  reduce using rule 54 (additiveexpression)
-
-
-State 61
-
-   55 additiveexpression: additiveexpression . INT_ADD_OP_TOK multiplicativeexpression
-   56 relationalexpression: additiveexpression .
-
-    INT_ADD_OP_TOK  shift, and go to state 85
-
-    $default  reduce using rule 56 (relationalexpression)
-
-
-State 62
-
-   57 relationalexpression: relationalexpression . INT_EQ_OP_TOK additiveexpression
-   58 equalityexpression: relationalexpression .
-
-    INT_EQ_OP_TOK  shift, and go to state 86
-
-    $default  reduce using rule 58 (equalityexpression)
-
-
-State 63
-
-   59 equalityexpression: equalityexpression . EQUALITY_TOK relationalexpression
-   60 conditionalandexpression: equalityexpression .
-
-    EQUALITY_TOK  shift, and go to state 87
-
-    $default  reduce using rule 60 (conditionalandexpression)
-
-
-State 64
-
-   61 conditionalandexpression: conditionalandexpression . BOOL_OP_ADD_TOK equalityexpression
-   62 conditionalorexpression: conditionalandexpression .
-
-    BOOL_OP_ADD_TOK  shift, and go to state 88
-
-    $default  reduce using rule 62 (conditionalorexpression)
-
-
-State 65
-
-   63 conditionalorexpression: conditionalorexpression . BOOL_OP_OR_TOK conditionalandexpression
-   64 assignmentexpression: conditionalorexpression .
-
-    BOOL_OP_OR_TOK  shift, and go to state 89
-
-    $default  reduce using rule 64 (assignmentexpression)
-
-
-State 66
-
-   67 expression: assignmentexpression .
-
-    $default  reduce using rule 67 (expression)
-
-
-State 67
-
-   65 assignmentexpression: assignment .
-
-    $default  reduce using rule 65 (assignmentexpression)
-
-
-State 68
-
-   33 statement: RETURN_TOK expression . SEMICOLON_TOK
-
-    SEMICOLON_TOK  shift, and go to state 90
-
-
-State 69
-
-   13 variabledeclaration: type identifier . SEMICOLON_TOK
-
-    SEMICOLON_TOK  shift, and go to state 22
-
-
-State 70
-
-   45 functioninvocation: identifier OPEN_PAREN_TOK . argumentlist END_PAREN_TOK
-   46                   | identifier OPEN_PAREN_TOK . END_PAREN_TOK
-
-    OPEN_PAREN_TOK  shift, and go to state 47
-    END_PAREN_TOK   shift, and go to state 91
-    IDENTIFIER_TOK  shift, and go to state 2
-    BOOL_LIT_TOK    shift, and go to state 49
-    STR_LIT_TOK     shift, and go to state 50
-    INT_LIT_TOK     shift, and go to state 51
-    '-'             shift, and go to state 52
-    '!'             shift, and go to state 53
-
-    literal                   go to state 54
-    identifier                go to state 55
-    primary                   go to state 56
-    argumentlist              go to state 92
-    functioninvocation        go to state 57
-    postfixexpression         go to state 58
-    unaryexpression           go to state 59
-    multiplicativeexpression  go to state 60
-    additiveexpression        go to state 61
-    relationalexpression      go to state 62
-    equalityexpression        go to state 63
-    conditionalandexpression  go to state 64
-    conditionalorexpression   go to state 65
-    assignmentexpression      go to state 66
-    assignment                go to state 67
-    expression                go to state 93
-
-
-State 71
-
-   66 assignment: identifier ASSIGNMENT_TOK . assignmentexpression
-
-    OPEN_PAREN_TOK  shift, and go to state 47
-    IDENTIFIER_TOK  shift, and go to state 2
-    BOOL_LIT_TOK    shift, and go to state 49
-    STR_LIT_TOK     shift, and go to state 50
-    INT_LIT_TOK     shift, and go to state 51
-    '-'             shift, and go to state 52
-    '!'             shift, and go to state 53
-
-    literal                   go to state 54
-    identifier                go to state 55
-    primary                   go to state 56
-    functioninvocation        go to state 57
-    postfixexpression         go to state 58
-    unaryexpression           go to state 59
-    multiplicativeexpression  go to state 60
-    additiveexpression        go to state 61
-    relationalexpression      go to state 62
-    equalityexpression        go to state 63
-    conditionalandexpression  go to state 64
-    conditionalorexpression   go to state 65
-    assignmentexpression      go to state 94
-    assignment                go to state 67
-
-
-State 72
-
-   23 block: OPEN_BRACE_TOK blockstatements END_BRACE_TOK .
-
-    $default  reduce using rule 23 (block)
-
-
-State 73
-
-   26 blockstatements: blockstatements blockstatement .
-
-    $default  reduce using rule 26 (blockstatements)
-
-
-State 74
-
-   31 statement: statementexpression SEMICOLON_TOK .
+   31 statement: block .
 
     $default  reduce using rule 31 (statement)
 
 
+State 35
+
+   25 block: OPEN_BRACE blockstatements . END_BRACE
+   28 blockstatements: blockstatements . blockstatement
+
+    INT_DEC     shift, and go to state 1
+    BOOL_DEC    shift, and go to state 2
+    OPEN_BRACE  shift, and go to state 19
+    END_BRACE   shift, and go to state 74
+    SEMICOLON   shift, and go to state 26
+    IDENTIFIER  shift, and go to state 3
+    IF          shift, and go to state 27
+    WHILE       shift, and go to state 28
+    BREAK       shift, and go to state 29
+    RETURN      shift, and go to state 30
+
+    type                 go to state 31
+    variabledeclaration  go to state 32
+    identifier           go to state 33
+    block                go to state 34
+    blockstatement       go to state 75
+    statement            go to state 37
+    statementexpression  go to state 38
+    functioninvocation   go to state 39
+    assignment           go to state 40
+
+
+State 36
+
+   27 blockstatements: blockstatement .
+
+    $default  reduce using rule 27 (blockstatements)
+
+
+State 37
+
+   30 blockstatement: statement .
+
+    $default  reduce using rule 30 (blockstatement)
+
+
+State 38
+
+   33 statement: statementexpression . SEMICOLON
+
+    SEMICOLON  shift, and go to state 76
+
+
+State 39
+
+   41 statementexpression: functioninvocation .
+
+    $default  reduce using rule 41 (statementexpression)
+
+
+State 40
+
+   40 statementexpression: assignment .
+
+    $default  reduce using rule 40 (statementexpression)
+
+
+State 41
+
+   21 functiondeclarator: identifier OPEN_PAREN END_PAREN .
+
+    $default  reduce using rule 21 (functiondeclarator)
+
+
+State 42
+
+   24 formalparameter: type . identifier
+
+    IDENTIFIER  shift, and go to state 3
+
+    identifier  go to state 77
+
+
+State 43
+
+   20 functiondeclarator: identifier OPEN_PAREN formalparameterlist . END_PAREN
+   23 formalparameterlist: formalparameterlist . COMMA formalparameter
+
+    END_PAREN  shift, and go to state 78
+    COMMA      shift, and go to state 79
+
+
+State 44
+
+   22 formalparameterlist: formalparameter .
+
+    $default  reduce using rule 22 (formalparameterlist)
+
+
+State 45
+
+   37 statement: IF OPEN_PAREN . expression END_PAREN statement
+   38          | IF OPEN_PAREN . expression END_PAREN statement ELSE statement
+
+    NUMBER      shift, and go to state 48
+    STRING      shift, and go to state 49
+    BOOL        shift, and go to state 50
+    VOID        shift, and go to state 51
+    OPEN_PAREN  shift, and go to state 52
+    NEG         shift, and go to state 54
+    NOT         shift, and go to state 55
+    IDENTIFIER  shift, and go to state 3
+
+    literal                   go to state 56
+    identifier                go to state 57
+    primary                   go to state 58
+    functioninvocation        go to state 59
+    postfixexpression         go to state 60
+    unaryexpression           go to state 61
+    multiplicativeexpression  go to state 62
+    additiveexpression        go to state 63
+    relationalexpression      go to state 64
+    equalityexpression        go to state 65
+    conditionalandexpression  go to state 66
+    conditionalorexpression   go to state 67
+    assignmentexpression      go to state 68
+    assignment                go to state 69
+    expression                go to state 80
+
+
+State 46
+
+   39 statement: WHILE OPEN_PAREN . expression END_PAREN statement
+
+    NUMBER      shift, and go to state 48
+    STRING      shift, and go to state 49
+    BOOL        shift, and go to state 50
+    VOID        shift, and go to state 51
+    OPEN_PAREN  shift, and go to state 52
+    NEG         shift, and go to state 54
+    NOT         shift, and go to state 55
+    IDENTIFIER  shift, and go to state 3
+
+    literal                   go to state 56
+    identifier                go to state 57
+    primary                   go to state 58
+    functioninvocation        go to state 59
+    postfixexpression         go to state 60
+    unaryexpression           go to state 61
+    multiplicativeexpression  go to state 62
+    additiveexpression        go to state 63
+    relationalexpression      go to state 64
+    equalityexpression        go to state 65
+    conditionalandexpression  go to state 66
+    conditionalorexpression   go to state 67
+    assignmentexpression      go to state 68
+    assignment                go to state 69
+    expression                go to state 81
+
+
+State 47
+
+   34 statement: BREAK SEMICOLON .
+
+    $default  reduce using rule 34 (statement)
+
+
+State 48
+
+    3 literal: NUMBER .
+
+    $default  reduce using rule 3 (literal)
+
+
+State 49
+
+    4 literal: STRING .
+
+    $default  reduce using rule 4 (literal)
+
+
+State 50
+
+    5 literal: BOOL .
+
+    $default  reduce using rule 5 (literal)
+
+
+State 51
+
+    6 literal: VOID .
+
+    $default  reduce using rule 6 (literal)
+
+
+State 52
+
+   43 primary: OPEN_PAREN . expression END_PAREN
+
+    NUMBER      shift, and go to state 48
+    STRING      shift, and go to state 49
+    BOOL        shift, and go to state 50
+    VOID        shift, and go to state 51
+    OPEN_PAREN  shift, and go to state 52
+    NEG         shift, and go to state 54
+    NOT         shift, and go to state 55
+    IDENTIFIER  shift, and go to state 3
+
+    literal                   go to state 56
+    identifier                go to state 57
+    primary                   go to state 58
+    functioninvocation        go to state 59
+    postfixexpression         go to state 60
+    unaryexpression           go to state 61
+    multiplicativeexpression  go to state 62
+    additiveexpression        go to state 63
+    relationalexpression      go to state 64
+    equalityexpression        go to state 65
+    conditionalandexpression  go to state 66
+    conditionalorexpression   go to state 67
+    assignmentexpression      go to state 68
+    assignment                go to state 69
+    expression                go to state 82
+
+
+State 53
+
+   36 statement: RETURN SEMICOLON .
+
+    $default  reduce using rule 36 (statement)
+
+
+State 54
+
+   51 unaryexpression: NEG . unaryexpression
+
+    NUMBER      shift, and go to state 48
+    STRING      shift, and go to state 49
+    BOOL        shift, and go to state 50
+    VOID        shift, and go to state 51
+    OPEN_PAREN  shift, and go to state 52
+    NEG         shift, and go to state 54
+    NOT         shift, and go to state 55
+    IDENTIFIER  shift, and go to state 3
+
+    literal             go to state 56
+    identifier          go to state 83
+    primary             go to state 58
+    functioninvocation  go to state 59
+    postfixexpression   go to state 60
+    unaryexpression     go to state 84
+
+
+State 55
+
+   52 unaryexpression: NOT . unaryexpression
+
+    NUMBER      shift, and go to state 48
+    STRING      shift, and go to state 49
+    BOOL        shift, and go to state 50
+    VOID        shift, and go to state 51
+    OPEN_PAREN  shift, and go to state 52
+    NEG         shift, and go to state 54
+    NOT         shift, and go to state 55
+    IDENTIFIER  shift, and go to state 3
+
+    literal             go to state 56
+    identifier          go to state 83
+    primary             go to state 58
+    functioninvocation  go to state 59
+    postfixexpression   go to state 60
+    unaryexpression     go to state 85
+
+
+State 56
+
+   42 primary: literal .
+
+    $default  reduce using rule 42 (primary)
+
+
+State 57
+
+   47 functioninvocation: identifier . OPEN_PAREN argumentlist END_PAREN
+   48                   | identifier . OPEN_PAREN END_PAREN
+   50 postfixexpression: identifier .
+   75 assignment: identifier . ASSIGNMENT assignmentexpression
+
+    OPEN_PAREN  shift, and go to state 72
+    ASSIGNMENT  shift, and go to state 73
+
+    $default  reduce using rule 50 (postfixexpression)
+
+
+State 58
+
+   49 postfixexpression: primary .
+
+    $default  reduce using rule 49 (postfixexpression)
+
+
+State 59
+
+   44 primary: functioninvocation .
+
+    $default  reduce using rule 44 (primary)
+
+
+State 60
+
+   53 unaryexpression: postfixexpression .
+
+    $default  reduce using rule 53 (unaryexpression)
+
+
+State 61
+
+   54 multiplicativeexpression: unaryexpression .
+
+    $default  reduce using rule 54 (multiplicativeexpression)
+
+
+State 62
+
+   55 multiplicativeexpression: multiplicativeexpression . MULT unaryexpression
+   56                         | multiplicativeexpression . DIV unaryexpression
+   57                         | multiplicativeexpression . MOD unaryexpression
+   58 additiveexpression: multiplicativeexpression .
+
+    MULT  shift, and go to state 86
+    DIV   shift, and go to state 87
+    MOD   shift, and go to state 88
+
+    $default  reduce using rule 58 (additiveexpression)
+
+
+State 63
+
+   59 additiveexpression: additiveexpression . ADD multiplicativeexpression
+   60                   | additiveexpression . SUB multiplicativeexpression
+   61 relationalexpression: additiveexpression .
+
+    ADD  shift, and go to state 89
+    SUB  shift, and go to state 90
+
+    $default  reduce using rule 61 (relationalexpression)
+
+
+State 64
+
+   62 relationalexpression: relationalexpression . LT additiveexpression
+   63                     | relationalexpression . GT additiveexpression
+   64                     | relationalexpression . LTE additiveexpression
+   65                     | relationalexpression . GTE additiveexpression
+   66 equalityexpression: relationalexpression .
+
+    GT   shift, and go to state 91
+    LT   shift, and go to state 92
+    GTE  shift, and go to state 93
+    LTE  shift, and go to state 94
+
+    $default  reduce using rule 66 (equalityexpression)
+
+
+State 65
+
+   67 equalityexpression: equalityexpression . EQ relationalexpression
+   68                   | equalityexpression . NEQ relationalexpression
+   69 conditionalandexpression: equalityexpression .
+
+    EQ   shift, and go to state 95
+    NEQ  shift, and go to state 96
+
+    $default  reduce using rule 69 (conditionalandexpression)
+
+
+State 66
+
+   70 conditionalandexpression: conditionalandexpression . AND equalityexpression
+   71 conditionalorexpression: conditionalandexpression .
+
+    AND  shift, and go to state 97
+
+    $default  reduce using rule 71 (conditionalorexpression)
+
+
+State 67
+
+   72 conditionalorexpression: conditionalorexpression . OR conditionalandexpression
+   73 assignmentexpression: conditionalorexpression .
+
+    OR  shift, and go to state 98
+
+    $default  reduce using rule 73 (assignmentexpression)
+
+
+State 68
+
+   76 expression: assignmentexpression .
+
+    $default  reduce using rule 76 (expression)
+
+
+State 69
+
+   74 assignmentexpression: assignment .
+
+    $default  reduce using rule 74 (assignmentexpression)
+
+
+State 70
+
+   35 statement: RETURN expression . SEMICOLON
+
+    SEMICOLON  shift, and go to state 99
+
+
+State 71
+
+   14 variabledeclaration: type identifier . SEMICOLON
+
+    SEMICOLON  shift, and go to state 23
+
+
+State 72
+
+   47 functioninvocation: identifier OPEN_PAREN . argumentlist END_PAREN
+   48                   | identifier OPEN_PAREN . END_PAREN
+
+    NUMBER      shift, and go to state 48
+    STRING      shift, and go to state 49
+    BOOL        shift, and go to state 50
+    VOID        shift, and go to state 51
+    OPEN_PAREN  shift, and go to state 52
+    END_PAREN   shift, and go to state 100
+    NEG         shift, and go to state 54
+    NOT         shift, and go to state 55
+    IDENTIFIER  shift, and go to state 3
+
+    literal                   go to state 56
+    identifier                go to state 57
+    primary                   go to state 58
+    argumentlist              go to state 101
+    functioninvocation        go to state 59
+    postfixexpression         go to state 60
+    unaryexpression           go to state 61
+    multiplicativeexpression  go to state 62
+    additiveexpression        go to state 63
+    relationalexpression      go to state 64
+    equalityexpression        go to state 65
+    conditionalandexpression  go to state 66
+    conditionalorexpression   go to state 67
+    assignmentexpression      go to state 68
+    assignment                go to state 69
+    expression                go to state 102
+
+
+State 73
+
+   75 assignment: identifier ASSIGNMENT . assignmentexpression
+
+    NUMBER      shift, and go to state 48
+    STRING      shift, and go to state 49
+    BOOL        shift, and go to state 50
+    VOID        shift, and go to state 51
+    OPEN_PAREN  shift, and go to state 52
+    NEG         shift, and go to state 54
+    NOT         shift, and go to state 55
+    IDENTIFIER  shift, and go to state 3
+
+    literal                   go to state 56
+    identifier                go to state 57
+    primary                   go to state 58
+    functioninvocation        go to state 59
+    postfixexpression         go to state 60
+    unaryexpression           go to state 61
+    multiplicativeexpression  go to state 62
+    additiveexpression        go to state 63
+    relationalexpression      go to state 64
+    equalityexpression        go to state 65
+    conditionalandexpression  go to state 66
+    conditionalorexpression   go to state 67
+    assignmentexpression      go to state 103
+    assignment                go to state 69
+
+
+State 74
+
+   25 block: OPEN_BRACE blockstatements END_BRACE .
+
+    $default  reduce using rule 25 (block)
+
+
 State 75
 
-   20 formalparameter: type identifier .
+   28 blockstatements: blockstatements blockstatement .
 
-    $default  reduce using rule 20 (formalparameter)
+    $default  reduce using rule 28 (blockstatements)
 
 
 State 76
 
-   16 functiondeclarator: identifier OPEN_PAREN_TOK formalparameterlist END_PAREN_TOK .
-
-    $default  reduce using rule 16 (functiondeclarator)
-
-
-State 77
-
-   19 formalparameterlist: formalparameterlist COMMA_TOK . formalparameter
-
-    TYPE_DEF_TOK  shift, and go to state 1
-
-    type             go to state 41
-    formalparameter  go to state 95
-
-
-State 78
-
-   35 statement: IF_TOK OPEN_PAREN_TOK expression . END_PAREN_TOK statement
-   36          | IF_TOK OPEN_PAREN_TOK expression . END_PAREN_TOK statement ELSE_TOK statement
-
-    END_PAREN_TOK  shift, and go to state 96
-
-
-State 79
-
-   37 statement: WHILE_TOK OPEN_PAREN_TOK expression . END_PAREN_TOK statement
-
-    END_PAREN_TOK  shift, and go to state 97
-
-
-State 80
-
-   41 primary: OPEN_PAREN_TOK expression . END_PAREN_TOK
-
-    END_PAREN_TOK  shift, and go to state 98
-
-
-State 81
-
-   45 functioninvocation: identifier . OPEN_PAREN_TOK argumentlist END_PAREN_TOK
-   46                   | identifier . OPEN_PAREN_TOK END_PAREN_TOK
-   48 postfixexpression: identifier .
-
-    OPEN_PAREN_TOK  shift, and go to state 70
-
-    $default  reduce using rule 48 (postfixexpression)
-
-
-State 82
-
-   49 unaryexpression: '-' unaryexpression .
-
-    $default  reduce using rule 49 (unaryexpression)
-
-
-State 83
-
-   50 unaryexpression: '!' unaryexpression .
-
-    $default  reduce using rule 50 (unaryexpression)
-
-
-State 84
-
-   53 multiplicativeexpression: multiplicativeexpression INT_MULT_OP_TOK . unaryexpression
-
-    OPEN_PAREN_TOK  shift, and go to state 47
-    IDENTIFIER_TOK  shift, and go to state 2
-    BOOL_LIT_TOK    shift, and go to state 49
-    STR_LIT_TOK     shift, and go to state 50
-    INT_LIT_TOK     shift, and go to state 51
-    '-'             shift, and go to state 52
-    '!'             shift, and go to state 53
-
-    literal             go to state 54
-    identifier          go to state 81
-    primary             go to state 56
-    functioninvocation  go to state 57
-    postfixexpression   go to state 58
-    unaryexpression     go to state 99
-
-
-State 85
-
-   55 additiveexpression: additiveexpression INT_ADD_OP_TOK . multiplicativeexpression
-
-    OPEN_PAREN_TOK  shift, and go to state 47
-    IDENTIFIER_TOK  shift, and go to state 2
-    BOOL_LIT_TOK    shift, and go to state 49
-    STR_LIT_TOK     shift, and go to state 50
-    INT_LIT_TOK     shift, and go to state 51
-    '-'             shift, and go to state 52
-    '!'             shift, and go to state 53
-
-    literal                   go to state 54
-    identifier                go to state 81
-    primary                   go to state 56
-    functioninvocation        go to state 57
-    postfixexpression         go to state 58
-    unaryexpression           go to state 59
-    multiplicativeexpression  go to state 100
-
-
-State 86
-
-   57 relationalexpression: relationalexpression INT_EQ_OP_TOK . additiveexpression
-
-    OPEN_PAREN_TOK  shift, and go to state 47
-    IDENTIFIER_TOK  shift, and go to state 2
-    BOOL_LIT_TOK    shift, and go to state 49
-    STR_LIT_TOK     shift, and go to state 50
-    INT_LIT_TOK     shift, and go to state 51
-    '-'             shift, and go to state 52
-    '!'             shift, and go to state 53
-
-    literal                   go to state 54
-    identifier                go to state 81
-    primary                   go to state 56
-    functioninvocation        go to state 57
-    postfixexpression         go to state 58
-    unaryexpression           go to state 59
-    multiplicativeexpression  go to state 60
-    additiveexpression        go to state 101
-
-
-State 87
-
-   59 equalityexpression: equalityexpression EQUALITY_TOK . relationalexpression
-
-    OPEN_PAREN_TOK  shift, and go to state 47
-    IDENTIFIER_TOK  shift, and go to state 2
-    BOOL_LIT_TOK    shift, and go to state 49
-    STR_LIT_TOK     shift, and go to state 50
-    INT_LIT_TOK     shift, and go to state 51
-    '-'             shift, and go to state 52
-    '!'             shift, and go to state 53
-
-    literal                   go to state 54
-    identifier                go to state 81
-    primary                   go to state 56
-    functioninvocation        go to state 57
-    postfixexpression         go to state 58
-    unaryexpression           go to state 59
-    multiplicativeexpression  go to state 60
-    additiveexpression        go to state 61
-    relationalexpression      go to state 102
-
-
-State 88
-
-   61 conditionalandexpression: conditionalandexpression BOOL_OP_ADD_TOK . equalityexpression
-
-    OPEN_PAREN_TOK  shift, and go to state 47
-    IDENTIFIER_TOK  shift, and go to state 2
-    BOOL_LIT_TOK    shift, and go to state 49
-    STR_LIT_TOK     shift, and go to state 50
-    INT_LIT_TOK     shift, and go to state 51
-    '-'             shift, and go to state 52
-    '!'             shift, and go to state 53
-
-    literal                   go to state 54
-    identifier                go to state 81
-    primary                   go to state 56
-    functioninvocation        go to state 57
-    postfixexpression         go to state 58
-    unaryexpression           go to state 59
-    multiplicativeexpression  go to state 60
-    additiveexpression        go to state 61
-    relationalexpression      go to state 62
-    equalityexpression        go to state 103
-
-
-State 89
-
-   63 conditionalorexpression: conditionalorexpression BOOL_OP_OR_TOK . conditionalandexpression
-
-    OPEN_PAREN_TOK  shift, and go to state 47
-    IDENTIFIER_TOK  shift, and go to state 2
-    BOOL_LIT_TOK    shift, and go to state 49
-    STR_LIT_TOK     shift, and go to state 50
-    INT_LIT_TOK     shift, and go to state 51
-    '-'             shift, and go to state 52
-    '!'             shift, and go to state 53
-
-    literal                   go to state 54
-    identifier                go to state 81
-    primary                   go to state 56
-    functioninvocation        go to state 57
-    postfixexpression         go to state 58
-    unaryexpression           go to state 59
-    multiplicativeexpression  go to state 60
-    additiveexpression        go to state 61
-    relationalexpression      go to state 62
-    equalityexpression        go to state 63
-    conditionalandexpression  go to state 104
-
-
-State 90
-
-   33 statement: RETURN_TOK expression SEMICOLON_TOK .
+   33 statement: statementexpression SEMICOLON .
 
     $default  reduce using rule 33 (statement)
 
 
+State 77
+
+   24 formalparameter: type identifier .
+
+    $default  reduce using rule 24 (formalparameter)
+
+
+State 78
+
+   20 functiondeclarator: identifier OPEN_PAREN formalparameterlist END_PAREN .
+
+    $default  reduce using rule 20 (functiondeclarator)
+
+
+State 79
+
+   23 formalparameterlist: formalparameterlist COMMA . formalparameter
+
+    INT_DEC   shift, and go to state 1
+    BOOL_DEC  shift, and go to state 2
+
+    type             go to state 42
+    formalparameter  go to state 104
+
+
+State 80
+
+   37 statement: IF OPEN_PAREN expression . END_PAREN statement
+   38          | IF OPEN_PAREN expression . END_PAREN statement ELSE statement
+
+    END_PAREN  shift, and go to state 105
+
+
+State 81
+
+   39 statement: WHILE OPEN_PAREN expression . END_PAREN statement
+
+    END_PAREN  shift, and go to state 106
+
+
+State 82
+
+   43 primary: OPEN_PAREN expression . END_PAREN
+
+    END_PAREN  shift, and go to state 107
+
+
+State 83
+
+   47 functioninvocation: identifier . OPEN_PAREN argumentlist END_PAREN
+   48                   | identifier . OPEN_PAREN END_PAREN
+   50 postfixexpression: identifier .
+
+    OPEN_PAREN  shift, and go to state 72
+
+    $default  reduce using rule 50 (postfixexpression)
+
+
+State 84
+
+   51 unaryexpression: NEG unaryexpression .
+
+    $default  reduce using rule 51 (unaryexpression)
+
+
+State 85
+
+   52 unaryexpression: NOT unaryexpression .
+
+    $default  reduce using rule 52 (unaryexpression)
+
+
+State 86
+
+   55 multiplicativeexpression: multiplicativeexpression MULT . unaryexpression
+
+    NUMBER      shift, and go to state 48
+    STRING      shift, and go to state 49
+    BOOL        shift, and go to state 50
+    VOID        shift, and go to state 51
+    OPEN_PAREN  shift, and go to state 52
+    NEG         shift, and go to state 54
+    NOT         shift, and go to state 55
+    IDENTIFIER  shift, and go to state 3
+
+    literal             go to state 56
+    identifier          go to state 83
+    primary             go to state 58
+    functioninvocation  go to state 59
+    postfixexpression   go to state 60
+    unaryexpression     go to state 108
+
+
+State 87
+
+   56 multiplicativeexpression: multiplicativeexpression DIV . unaryexpression
+
+    NUMBER      shift, and go to state 48
+    STRING      shift, and go to state 49
+    BOOL        shift, and go to state 50
+    VOID        shift, and go to state 51
+    OPEN_PAREN  shift, and go to state 52
+    NEG         shift, and go to state 54
+    NOT         shift, and go to state 55
+    IDENTIFIER  shift, and go to state 3
+
+    literal             go to state 56
+    identifier          go to state 83
+    primary             go to state 58
+    functioninvocation  go to state 59
+    postfixexpression   go to state 60
+    unaryexpression     go to state 109
+
+
+State 88
+
+   57 multiplicativeexpression: multiplicativeexpression MOD . unaryexpression
+
+    NUMBER      shift, and go to state 48
+    STRING      shift, and go to state 49
+    BOOL        shift, and go to state 50
+    VOID        shift, and go to state 51
+    OPEN_PAREN  shift, and go to state 52
+    NEG         shift, and go to state 54
+    NOT         shift, and go to state 55
+    IDENTIFIER  shift, and go to state 3
+
+    literal             go to state 56
+    identifier          go to state 83
+    primary             go to state 58
+    functioninvocation  go to state 59
+    postfixexpression   go to state 60
+    unaryexpression     go to state 110
+
+
+State 89
+
+   59 additiveexpression: additiveexpression ADD . multiplicativeexpression
+
+    NUMBER      shift, and go to state 48
+    STRING      shift, and go to state 49
+    BOOL        shift, and go to state 50
+    VOID        shift, and go to state 51
+    OPEN_PAREN  shift, and go to state 52
+    NEG         shift, and go to state 54
+    NOT         shift, and go to state 55
+    IDENTIFIER  shift, and go to state 3
+
+    literal                   go to state 56
+    identifier                go to state 83
+    primary                   go to state 58
+    functioninvocation        go to state 59
+    postfixexpression         go to state 60
+    unaryexpression           go to state 61
+    multiplicativeexpression  go to state 111
+
+
+State 90
+
+   60 additiveexpression: additiveexpression SUB . multiplicativeexpression
+
+    NUMBER      shift, and go to state 48
+    STRING      shift, and go to state 49
+    BOOL        shift, and go to state 50
+    VOID        shift, and go to state 51
+    OPEN_PAREN  shift, and go to state 52
+    NEG         shift, and go to state 54
+    NOT         shift, and go to state 55
+    IDENTIFIER  shift, and go to state 3
+
+    literal                   go to state 56
+    identifier                go to state 83
+    primary                   go to state 58
+    functioninvocation        go to state 59
+    postfixexpression         go to state 60
+    unaryexpression           go to state 61
+    multiplicativeexpression  go to state 112
+
+
 State 91
 
-   46 functioninvocation: identifier OPEN_PAREN_TOK END_PAREN_TOK .
+   63 relationalexpression: relationalexpression GT . additiveexpression
 
-    $default  reduce using rule 46 (functioninvocation)
+    NUMBER      shift, and go to state 48
+    STRING      shift, and go to state 49
+    BOOL        shift, and go to state 50
+    VOID        shift, and go to state 51
+    OPEN_PAREN  shift, and go to state 52
+    NEG         shift, and go to state 54
+    NOT         shift, and go to state 55
+    IDENTIFIER  shift, and go to state 3
+
+    literal                   go to state 56
+    identifier                go to state 83
+    primary                   go to state 58
+    functioninvocation        go to state 59
+    postfixexpression         go to state 60
+    unaryexpression           go to state 61
+    multiplicativeexpression  go to state 62
+    additiveexpression        go to state 113
 
 
 State 92
 
-   44 argumentlist: argumentlist . COMMA_TOK expression
-   45 functioninvocation: identifier OPEN_PAREN_TOK argumentlist . END_PAREN_TOK
+   62 relationalexpression: relationalexpression LT . additiveexpression
 
-    END_PAREN_TOK  shift, and go to state 105
-    COMMA_TOK      shift, and go to state 106
+    NUMBER      shift, and go to state 48
+    STRING      shift, and go to state 49
+    BOOL        shift, and go to state 50
+    VOID        shift, and go to state 51
+    OPEN_PAREN  shift, and go to state 52
+    NEG         shift, and go to state 54
+    NOT         shift, and go to state 55
+    IDENTIFIER  shift, and go to state 3
+
+    literal                   go to state 56
+    identifier                go to state 83
+    primary                   go to state 58
+    functioninvocation        go to state 59
+    postfixexpression         go to state 60
+    unaryexpression           go to state 61
+    multiplicativeexpression  go to state 62
+    additiveexpression        go to state 114
 
 
 State 93
 
-   43 argumentlist: expression .
+   65 relationalexpression: relationalexpression GTE . additiveexpression
 
-    $default  reduce using rule 43 (argumentlist)
+    NUMBER      shift, and go to state 48
+    STRING      shift, and go to state 49
+    BOOL        shift, and go to state 50
+    VOID        shift, and go to state 51
+    OPEN_PAREN  shift, and go to state 52
+    NEG         shift, and go to state 54
+    NOT         shift, and go to state 55
+    IDENTIFIER  shift, and go to state 3
+
+    literal                   go to state 56
+    identifier                go to state 83
+    primary                   go to state 58
+    functioninvocation        go to state 59
+    postfixexpression         go to state 60
+    unaryexpression           go to state 61
+    multiplicativeexpression  go to state 62
+    additiveexpression        go to state 115
 
 
 State 94
 
-   66 assignment: identifier ASSIGNMENT_TOK assignmentexpression .
+   64 relationalexpression: relationalexpression LTE . additiveexpression
 
-    $default  reduce using rule 66 (assignment)
+    NUMBER      shift, and go to state 48
+    STRING      shift, and go to state 49
+    BOOL        shift, and go to state 50
+    VOID        shift, and go to state 51
+    OPEN_PAREN  shift, and go to state 52
+    NEG         shift, and go to state 54
+    NOT         shift, and go to state 55
+    IDENTIFIER  shift, and go to state 3
+
+    literal                   go to state 56
+    identifier                go to state 83
+    primary                   go to state 58
+    functioninvocation        go to state 59
+    postfixexpression         go to state 60
+    unaryexpression           go to state 61
+    multiplicativeexpression  go to state 62
+    additiveexpression        go to state 116
 
 
 State 95
 
-   19 formalparameterlist: formalparameterlist COMMA_TOK formalparameter .
+   67 equalityexpression: equalityexpression EQ . relationalexpression
 
-    $default  reduce using rule 19 (formalparameterlist)
+    NUMBER      shift, and go to state 48
+    STRING      shift, and go to state 49
+    BOOL        shift, and go to state 50
+    VOID        shift, and go to state 51
+    OPEN_PAREN  shift, and go to state 52
+    NEG         shift, and go to state 54
+    NOT         shift, and go to state 55
+    IDENTIFIER  shift, and go to state 3
+
+    literal                   go to state 56
+    identifier                go to state 83
+    primary                   go to state 58
+    functioninvocation        go to state 59
+    postfixexpression         go to state 60
+    unaryexpression           go to state 61
+    multiplicativeexpression  go to state 62
+    additiveexpression        go to state 63
+    relationalexpression      go to state 117
 
 
 State 96
 
-   35 statement: IF_TOK OPEN_PAREN_TOK expression END_PAREN_TOK . statement
-   36          | IF_TOK OPEN_PAREN_TOK expression END_PAREN_TOK . statement ELSE_TOK statement
+   68 equalityexpression: equalityexpression NEQ . relationalexpression
 
-    OPEN_BRACE_TOK  shift, and go to state 18
-    SEMICOLON_TOK   shift, and go to state 25
-    IDENTIFIER_TOK  shift, and go to state 2
-    IF_TOK          shift, and go to state 26
-    WHILE_TOK       shift, and go to state 27
-    BREAK_TOK       shift, and go to state 28
-    RETURN_TOK      shift, and go to state 29
+    NUMBER      shift, and go to state 48
+    STRING      shift, and go to state 49
+    BOOL        shift, and go to state 50
+    VOID        shift, and go to state 51
+    OPEN_PAREN  shift, and go to state 52
+    NEG         shift, and go to state 54
+    NOT         shift, and go to state 55
+    IDENTIFIER  shift, and go to state 3
 
-    identifier           go to state 31
-    block                go to state 33
-    statement            go to state 107
-    statementexpression  go to state 37
-    functioninvocation   go to state 38
-    assignment           go to state 39
+    literal                   go to state 56
+    identifier                go to state 83
+    primary                   go to state 58
+    functioninvocation        go to state 59
+    postfixexpression         go to state 60
+    unaryexpression           go to state 61
+    multiplicativeexpression  go to state 62
+    additiveexpression        go to state 63
+    relationalexpression      go to state 118
 
 
 State 97
 
-   37 statement: WHILE_TOK OPEN_PAREN_TOK expression END_PAREN_TOK . statement
+   70 conditionalandexpression: conditionalandexpression AND . equalityexpression
 
-    OPEN_BRACE_TOK  shift, and go to state 18
-    SEMICOLON_TOK   shift, and go to state 25
-    IDENTIFIER_TOK  shift, and go to state 2
-    IF_TOK          shift, and go to state 26
-    WHILE_TOK       shift, and go to state 27
-    BREAK_TOK       shift, and go to state 28
-    RETURN_TOK      shift, and go to state 29
+    NUMBER      shift, and go to state 48
+    STRING      shift, and go to state 49
+    BOOL        shift, and go to state 50
+    VOID        shift, and go to state 51
+    OPEN_PAREN  shift, and go to state 52
+    NEG         shift, and go to state 54
+    NOT         shift, and go to state 55
+    IDENTIFIER  shift, and go to state 3
 
-    identifier           go to state 31
-    block                go to state 33
-    statement            go to state 108
-    statementexpression  go to state 37
-    functioninvocation   go to state 38
-    assignment           go to state 39
+    literal                   go to state 56
+    identifier                go to state 83
+    primary                   go to state 58
+    functioninvocation        go to state 59
+    postfixexpression         go to state 60
+    unaryexpression           go to state 61
+    multiplicativeexpression  go to state 62
+    additiveexpression        go to state 63
+    relationalexpression      go to state 64
+    equalityexpression        go to state 119
 
 
 State 98
 
-   41 primary: OPEN_PAREN_TOK expression END_PAREN_TOK .
+   72 conditionalorexpression: conditionalorexpression OR . conditionalandexpression
 
-    $default  reduce using rule 41 (primary)
+    NUMBER      shift, and go to state 48
+    STRING      shift, and go to state 49
+    BOOL        shift, and go to state 50
+    VOID        shift, and go to state 51
+    OPEN_PAREN  shift, and go to state 52
+    NEG         shift, and go to state 54
+    NOT         shift, and go to state 55
+    IDENTIFIER  shift, and go to state 3
+
+    literal                   go to state 56
+    identifier                go to state 83
+    primary                   go to state 58
+    functioninvocation        go to state 59
+    postfixexpression         go to state 60
+    unaryexpression           go to state 61
+    multiplicativeexpression  go to state 62
+    additiveexpression        go to state 63
+    relationalexpression      go to state 64
+    equalityexpression        go to state 65
+    conditionalandexpression  go to state 120
 
 
 State 99
 
-   53 multiplicativeexpression: multiplicativeexpression INT_MULT_OP_TOK unaryexpression .
+   35 statement: RETURN expression SEMICOLON .
 
-    $default  reduce using rule 53 (multiplicativeexpression)
+    $default  reduce using rule 35 (statement)
 
 
 State 100
 
-   53 multiplicativeexpression: multiplicativeexpression . INT_MULT_OP_TOK unaryexpression
-   55 additiveexpression: additiveexpression INT_ADD_OP_TOK multiplicativeexpression .
+   48 functioninvocation: identifier OPEN_PAREN END_PAREN .
 
-    INT_MULT_OP_TOK  shift, and go to state 84
-
-    $default  reduce using rule 55 (additiveexpression)
+    $default  reduce using rule 48 (functioninvocation)
 
 
 State 101
 
-   55 additiveexpression: additiveexpression . INT_ADD_OP_TOK multiplicativeexpression
-   57 relationalexpression: relationalexpression INT_EQ_OP_TOK additiveexpression .
+   46 argumentlist: argumentlist . COMMA expression
+   47 functioninvocation: identifier OPEN_PAREN argumentlist . END_PAREN
 
-    INT_ADD_OP_TOK  shift, and go to state 85
-
-    $default  reduce using rule 57 (relationalexpression)
+    END_PAREN  shift, and go to state 121
+    COMMA      shift, and go to state 122
 
 
 State 102
 
-   57 relationalexpression: relationalexpression . INT_EQ_OP_TOK additiveexpression
-   59 equalityexpression: equalityexpression EQUALITY_TOK relationalexpression .
+   45 argumentlist: expression .
 
-    INT_EQ_OP_TOK  shift, and go to state 86
-
-    $default  reduce using rule 59 (equalityexpression)
+    $default  reduce using rule 45 (argumentlist)
 
 
 State 103
 
-   59 equalityexpression: equalityexpression . EQUALITY_TOK relationalexpression
-   61 conditionalandexpression: conditionalandexpression BOOL_OP_ADD_TOK equalityexpression .
+   75 assignment: identifier ASSIGNMENT assignmentexpression .
 
-    EQUALITY_TOK  shift, and go to state 87
-
-    $default  reduce using rule 61 (conditionalandexpression)
+    $default  reduce using rule 75 (assignment)
 
 
 State 104
 
-   61 conditionalandexpression: conditionalandexpression . BOOL_OP_ADD_TOK equalityexpression
-   63 conditionalorexpression: conditionalorexpression BOOL_OP_OR_TOK conditionalandexpression .
+   23 formalparameterlist: formalparameterlist COMMA formalparameter .
 
-    BOOL_OP_ADD_TOK  shift, and go to state 88
-
-    $default  reduce using rule 63 (conditionalorexpression)
+    $default  reduce using rule 23 (formalparameterlist)
 
 
 State 105
 
-   45 functioninvocation: identifier OPEN_PAREN_TOK argumentlist END_PAREN_TOK .
+   37 statement: IF OPEN_PAREN expression END_PAREN . statement
+   38          | IF OPEN_PAREN expression END_PAREN . statement ELSE statement
 
-    $default  reduce using rule 45 (functioninvocation)
+    OPEN_BRACE  shift, and go to state 19
+    SEMICOLON   shift, and go to state 26
+    IDENTIFIER  shift, and go to state 3
+    IF          shift, and go to state 27
+    WHILE       shift, and go to state 28
+    BREAK       shift, and go to state 29
+    RETURN      shift, and go to state 30
+
+    identifier           go to state 33
+    block                go to state 34
+    statement            go to state 123
+    statementexpression  go to state 38
+    functioninvocation   go to state 39
+    assignment           go to state 40
 
 
 State 106
 
-   44 argumentlist: argumentlist COMMA_TOK . expression
+   39 statement: WHILE OPEN_PAREN expression END_PAREN . statement
 
-    OPEN_PAREN_TOK  shift, and go to state 47
-    IDENTIFIER_TOK  shift, and go to state 2
-    BOOL_LIT_TOK    shift, and go to state 49
-    STR_LIT_TOK     shift, and go to state 50
-    INT_LIT_TOK     shift, and go to state 51
-    '-'             shift, and go to state 52
-    '!'             shift, and go to state 53
+    OPEN_BRACE  shift, and go to state 19
+    SEMICOLON   shift, and go to state 26
+    IDENTIFIER  shift, and go to state 3
+    IF          shift, and go to state 27
+    WHILE       shift, and go to state 28
+    BREAK       shift, and go to state 29
+    RETURN      shift, and go to state 30
 
-    literal                   go to state 54
-    identifier                go to state 55
-    primary                   go to state 56
-    functioninvocation        go to state 57
-    postfixexpression         go to state 58
-    unaryexpression           go to state 59
-    multiplicativeexpression  go to state 60
-    additiveexpression        go to state 61
-    relationalexpression      go to state 62
-    equalityexpression        go to state 63
-    conditionalandexpression  go to state 64
-    conditionalorexpression   go to state 65
-    assignmentexpression      go to state 66
-    assignment                go to state 67
-    expression                go to state 109
+    identifier           go to state 33
+    block                go to state 34
+    statement            go to state 124
+    statementexpression  go to state 38
+    functioninvocation   go to state 39
+    assignment           go to state 40
 
 
 State 107
 
-   35 statement: IF_TOK OPEN_PAREN_TOK expression END_PAREN_TOK statement .
-   36          | IF_TOK OPEN_PAREN_TOK expression END_PAREN_TOK statement . ELSE_TOK statement
+   43 primary: OPEN_PAREN expression END_PAREN .
 
-    ELSE_TOK  shift, and go to state 110
-
-    ELSE_TOK  [reduce using rule 35 (statement)]
-    $default  reduce using rule 35 (statement)
+    $default  reduce using rule 43 (primary)
 
 
 State 108
 
-   37 statement: WHILE_TOK OPEN_PAREN_TOK expression END_PAREN_TOK statement .
+   55 multiplicativeexpression: multiplicativeexpression MULT unaryexpression .
 
-    $default  reduce using rule 37 (statement)
+    $default  reduce using rule 55 (multiplicativeexpression)
 
 
 State 109
 
-   44 argumentlist: argumentlist COMMA_TOK expression .
+   56 multiplicativeexpression: multiplicativeexpression DIV unaryexpression .
 
-    $default  reduce using rule 44 (argumentlist)
+    $default  reduce using rule 56 (multiplicativeexpression)
 
 
 State 110
 
-   36 statement: IF_TOK OPEN_PAREN_TOK expression END_PAREN_TOK statement ELSE_TOK . statement
+   57 multiplicativeexpression: multiplicativeexpression MOD unaryexpression .
 
-    OPEN_BRACE_TOK  shift, and go to state 18
-    SEMICOLON_TOK   shift, and go to state 25
-    IDENTIFIER_TOK  shift, and go to state 2
-    IF_TOK          shift, and go to state 26
-    WHILE_TOK       shift, and go to state 27
-    BREAK_TOK       shift, and go to state 28
-    RETURN_TOK      shift, and go to state 29
-
-    identifier           go to state 31
-    block                go to state 33
-    statement            go to state 111
-    statementexpression  go to state 37
-    functioninvocation   go to state 38
-    assignment           go to state 39
+    $default  reduce using rule 57 (multiplicativeexpression)
 
 
 State 111
 
-   36 statement: IF_TOK OPEN_PAREN_TOK expression END_PAREN_TOK statement ELSE_TOK statement .
+   55 multiplicativeexpression: multiplicativeexpression . MULT unaryexpression
+   56                         | multiplicativeexpression . DIV unaryexpression
+   57                         | multiplicativeexpression . MOD unaryexpression
+   59 additiveexpression: additiveexpression ADD multiplicativeexpression .
 
-    $default  reduce using rule 36 (statement)
+    MULT  shift, and go to state 86
+    DIV   shift, and go to state 87
+    MOD   shift, and go to state 88
+
+    $default  reduce using rule 59 (additiveexpression)
+
+
+State 112
+
+   55 multiplicativeexpression: multiplicativeexpression . MULT unaryexpression
+   56                         | multiplicativeexpression . DIV unaryexpression
+   57                         | multiplicativeexpression . MOD unaryexpression
+   60 additiveexpression: additiveexpression SUB multiplicativeexpression .
+
+    MULT  shift, and go to state 86
+    DIV   shift, and go to state 87
+    MOD   shift, and go to state 88
+
+    $default  reduce using rule 60 (additiveexpression)
+
+
+State 113
+
+   59 additiveexpression: additiveexpression . ADD multiplicativeexpression
+   60                   | additiveexpression . SUB multiplicativeexpression
+   63 relationalexpression: relationalexpression GT additiveexpression .
+
+    ADD  shift, and go to state 89
+    SUB  shift, and go to state 90
+
+    $default  reduce using rule 63 (relationalexpression)
+
+
+State 114
+
+   59 additiveexpression: additiveexpression . ADD multiplicativeexpression
+   60                   | additiveexpression . SUB multiplicativeexpression
+   62 relationalexpression: relationalexpression LT additiveexpression .
+
+    ADD  shift, and go to state 89
+    SUB  shift, and go to state 90
+
+    $default  reduce using rule 62 (relationalexpression)
+
+
+State 115
+
+   59 additiveexpression: additiveexpression . ADD multiplicativeexpression
+   60                   | additiveexpression . SUB multiplicativeexpression
+   65 relationalexpression: relationalexpression GTE additiveexpression .
+
+    ADD  shift, and go to state 89
+    SUB  shift, and go to state 90
+
+    $default  reduce using rule 65 (relationalexpression)
+
+
+State 116
+
+   59 additiveexpression: additiveexpression . ADD multiplicativeexpression
+   60                   | additiveexpression . SUB multiplicativeexpression
+   64 relationalexpression: relationalexpression LTE additiveexpression .
+
+    ADD  shift, and go to state 89
+    SUB  shift, and go to state 90
+
+    $default  reduce using rule 64 (relationalexpression)
+
+
+State 117
+
+   62 relationalexpression: relationalexpression . LT additiveexpression
+   63                     | relationalexpression . GT additiveexpression
+   64                     | relationalexpression . LTE additiveexpression
+   65                     | relationalexpression . GTE additiveexpression
+   67 equalityexpression: equalityexpression EQ relationalexpression .
+
+    GT   shift, and go to state 91
+    LT   shift, and go to state 92
+    GTE  shift, and go to state 93
+    LTE  shift, and go to state 94
+
+    $default  reduce using rule 67 (equalityexpression)
+
+
+State 118
+
+   62 relationalexpression: relationalexpression . LT additiveexpression
+   63                     | relationalexpression . GT additiveexpression
+   64                     | relationalexpression . LTE additiveexpression
+   65                     | relationalexpression . GTE additiveexpression
+   68 equalityexpression: equalityexpression NEQ relationalexpression .
+
+    GT   shift, and go to state 91
+    LT   shift, and go to state 92
+    GTE  shift, and go to state 93
+    LTE  shift, and go to state 94
+
+    $default  reduce using rule 68 (equalityexpression)
+
+
+State 119
+
+   67 equalityexpression: equalityexpression . EQ relationalexpression
+   68                   | equalityexpression . NEQ relationalexpression
+   70 conditionalandexpression: conditionalandexpression AND equalityexpression .
+
+    EQ   shift, and go to state 95
+    NEQ  shift, and go to state 96
+
+    $default  reduce using rule 70 (conditionalandexpression)
+
+
+State 120
+
+   70 conditionalandexpression: conditionalandexpression . AND equalityexpression
+   72 conditionalorexpression: conditionalorexpression OR conditionalandexpression .
+
+    AND  shift, and go to state 97
+
+    $default  reduce using rule 72 (conditionalorexpression)
+
+
+State 121
+
+   47 functioninvocation: identifier OPEN_PAREN argumentlist END_PAREN .
+
+    $default  reduce using rule 47 (functioninvocation)
+
+
+State 122
+
+   46 argumentlist: argumentlist COMMA . expression
+
+    NUMBER      shift, and go to state 48
+    STRING      shift, and go to state 49
+    BOOL        shift, and go to state 50
+    VOID        shift, and go to state 51
+    OPEN_PAREN  shift, and go to state 52
+    NEG         shift, and go to state 54
+    NOT         shift, and go to state 55
+    IDENTIFIER  shift, and go to state 3
+
+    literal                   go to state 56
+    identifier                go to state 57
+    primary                   go to state 58
+    functioninvocation        go to state 59
+    postfixexpression         go to state 60
+    unaryexpression           go to state 61
+    multiplicativeexpression  go to state 62
+    additiveexpression        go to state 63
+    relationalexpression      go to state 64
+    equalityexpression        go to state 65
+    conditionalandexpression  go to state 66
+    conditionalorexpression   go to state 67
+    assignmentexpression      go to state 68
+    assignment                go to state 69
+    expression                go to state 125
+
+
+State 123
+
+   37 statement: IF OPEN_PAREN expression END_PAREN statement .
+   38          | IF OPEN_PAREN expression END_PAREN statement . ELSE statement
+
+    ELSE  shift, and go to state 126
+
+    ELSE      [reduce using rule 37 (statement)]
+    $default  reduce using rule 37 (statement)
+
+
+State 124
+
+   39 statement: WHILE OPEN_PAREN expression END_PAREN statement .
+
+    $default  reduce using rule 39 (statement)
+
+
+State 125
+
+   46 argumentlist: argumentlist COMMA expression .
+
+    $default  reduce using rule 46 (argumentlist)
+
+
+State 126
+
+   38 statement: IF OPEN_PAREN expression END_PAREN statement ELSE . statement
+
+    OPEN_BRACE  shift, and go to state 19
+    SEMICOLON   shift, and go to state 26
+    IDENTIFIER  shift, and go to state 3
+    IF          shift, and go to state 27
+    WHILE       shift, and go to state 28
+    BREAK       shift, and go to state 29
+    RETURN      shift, and go to state 30
+
+    identifier           go to state 33
+    block                go to state 34
+    statement            go to state 127
+    statementexpression  go to state 38
+    functioninvocation   go to state 39
+    assignment           go to state 40
+
+
+State 127
+
+   38 statement: IF OPEN_PAREN expression END_PAREN statement ELSE statement .
+
+    $default  reduce using rule 38 (statement)

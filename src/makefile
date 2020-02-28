@@ -9,10 +9,10 @@ DATA_DIR = ./data/
 CC	= g++
 CFLAGS	= -g -Wall -ansi -pedantic -I$(HEAD_DIR) -Wno-write-strings
 
-OBJS	= $(BIN_DIR)bison.o $(BIN_DIR)lex.o $(BIN_DIR)main.o $(BIN_DIR)tokens.o $(BIN_DIR)ast.o
+OBJS	= $(BIN_DIR)bison.o $(BIN_DIR)lex.o $(BIN_DIR)main.o $(BIN_DIR)tokens.o $(BIN_DIR)ast.o $(BIN_DIR)token_map.o
 
 compiler:		$(OBJS)
-		$(CC) $(CFLAGS) $(OBJS) -o $(BIN_DIR)compiler -lfl
+		$(CC) -DYYDEBUG $(CFLAGS) $(OBJS) -o $(BIN_DIR)compiler -lfl
 
 $(BIN_DIR)lex.o:	lex.yy.c
 		$(CC) $(CFLAGS) -c $(SCANNER_DIR)lex.yy.c -o $(BIN_DIR)lex.o
@@ -22,20 +22,24 @@ lex.yy.c:		./scanner/scan.l
 		@ mv lex.yy.c $(SCANNER_DIR)lex.yy.c
 
 $(BIN_DIR)bison.o:	bison.c
-		$(CC) $(CFLAGS) -c $(PARSER_DIR)bison.c -o $(BIN_DIR)bison.o
+		$(CC) -DYYDEBUG -DYYTRACE $(CFLAGS) -c $(PARSER_DIR)bison.c -o $(BIN_DIR)bison.o
 
 $(BIN_DIR)tokens.o:	tokens.c
 		$(CC) $(CFLAGS) -c tokens.c -o $(BIN_DIR)tokens.o
 
 bison.c:	$(PARSER_DIR)parse.y
-	bison -d -v -b $(PARSER_DIR)parse $(PARSER_DIR)parse.y 
+	bison --debug -d -v -b $(PARSER_DIR)parse $(PARSER_DIR)parse.y 
 	@ cp $(PARSER_DIR)parse.tab.c $(PARSER_DIR)bison.c
 	@ cp $(PARSER_DIR)parse.tab.h $(HEAD_DIR)parse.h
+
+${BIN_DIR}token_map.o:
+	python3 $(PARSER_DIR)convert_tokens.py
+	$(CC) $(CFLAGS) -c $(PARSER_DIR)token_map.c -o $(BIN_DIR)token_map.o
 
 $(BIN_DIR)main.o:		main.cc
 		$(CC) $(CFLAGS) -c main.cc -o $(BIN_DIR)main.o
 
-$(BIN_DIR)ast.o:	$(DATA_DIR)ast.cpp
+$(BIN_DIR)ast.o:	$(DATA_DIR)ast.cpp  ${BIN_DIR}token_map.o
 	$(CC) $(CFLAGS) -c $(DATA_DIR)ast.cpp -o $(BIN_DIR)ast.o
 
 lex.o yac.o main.o	: $(HEAD_DIR)heading.h

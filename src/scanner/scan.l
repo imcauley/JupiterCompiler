@@ -5,7 +5,7 @@
 */
 
 %{
-    #include "tokens.h"
+    // #include "tokens.h"
     #include "parse.h"
     int mylineno = 0;
     int whitespace = 0;
@@ -41,41 +41,52 @@ str_literal \"(.|\0|\\0|\\b|\\n|\\|\\f|\\t|\\r|\\\"|\')+\"
 
 
 %%
-{type}              {return TYPE_DEF;};
-
-"if"                {return IF;};
-"else"              {return ELSE;};
-"while"             {return WHILE;};
-"break"             {return BREAK;};
-"return"            {return RETURN;};
-
-{bool_literal}      {return BOOL_LIT;};
-{int_literal}       {printf("test int lit"); return INT_LIT;};
-{str_literal}       {return STR_LIT;};
-
-{int_mult_op}            {return INT_MULT_OP;};
-{int_add_op}            {return INT_ADD_OP;};
-{int_eq_op}            {return INT_EQ_OP;};
-
-{bool_op_un}        {return BOOL_OP_UN;};
-"&&"                {return BOOL_OP_ADD;};
-"\|\|"              {return BOOL_OP_OR;};
-{equality}          {return EQUALITY;};
-{assignment}        {return ASSIGNMENT;};
-
-"("                 {return OPEN_PAREN;};
-")"                 {return END_PAREN;};
-"{"                 {return OPEN_BRACE;};
-"}"                 {return END_BRACE;};
-","                 {return COMMA;};
-";"                 {return SEMICOLON;};
-
 {ws}                /* do nothing */
+"int"               {yylval.name = strdup(yytext); return INT_DEC;};
+"boolean"               {yylval.name = strdup(yytext); return BOOL_DEC;};
+"void"               {yylval.name = strdup(yytext); return VOID;};
+
+"if"                {yylval.name = strdup(yytext); return IF;};
+"else"              {yylval.name = strdup(yytext); return ELSE;};
+"while"             {yylval.name = strdup(yytext); return WHILE;};
+"break"             {yylval.name = strdup(yytext); return BREAK;};
+"return"            {yylval.name = strdup(yytext); return RETURN;};
+
+{bool_literal}      {yylval.name = strdup(yytext); return BOOL;};
+{int_literal}       {yylval.name = strdup(yytext); return NUMBER;};
+{str_literal}       {yylval.name = strdup(yytext); return STRING;};
+
+"*"                 {yylval.name = strdup(yytext); return MULT;};
+"/"                 {yylval.name = strdup(yytext); return DIV;};
+"%"                 {yylval.name = strdup(yytext); return MOD;};
+"+"                 {yylval.name = strdup(yytext); return ADD;};
+"-"                 {yylval.name = strdup(yytext); return SUB;};
+
+"<"                 {yylval.name = strdup(yytext); return LT;};
+">"                 {yylval.name = strdup(yytext); return GT;};
+"<="                {yylval.name = strdup(yytext); return LTE;};
+">="                {yylval.name = strdup(yytext); return GTE;};
+
+"&&"                {yylval.name = strdup(yytext); return AND;};
+"||"                {yylval.name = strdup(yytext); return OR;};
+
+"=="                {yylval.name = strdup(yytext); return EQ;};
+"!="                {yylval.name = strdup(yytext); return NEQ;};
+
+"="                 {yylval.name = strdup(yytext); return ASSIGNMENT;};
+
+"("                 {yylval.name = strdup(yytext); return OPEN_PAREN;};
+")"                 {yylval.name = strdup(yytext); return END_PAREN;};
+"{"                 {yylval.name = strdup(yytext); return OPEN_BRACE;};
+"}"                 {yylval.name = strdup(yytext); return END_BRACE;};
+","                 {yylval.name = strdup(yytext); return COMMA;};
+";"                 {yylval.name = strdup(yytext); return SEMICOLON;};
+
 \/\/.*              /* do nothing */
 ###(.|\n)*###       /*also do nothing*/
-{identifier}        {return IDENTIFIER;};
+{identifier}        {yylval.name = strdup(yytext); return IDENTIFIER;};
 
-.                   {fprintf(stderr, "Unidentifed token: %s\nAt line %d\n", yytext, yylineno); exit(2);};
+.                   {fprintf(stderr, "Unidentifed token: %s\nAt line %d\n", strdup(yytext), yylineno); exit(2);};
 
 %%
 

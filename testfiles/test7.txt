@@ -1,0 +1,6 @@
+howdy() {
+        prints("Hello, world!\n");
+}
+ int test() {
+     return 5;
+ }

@@ -1,208 +1,312 @@
-/* Mini Calculator */
-/* calc.y */
+%{
+  #define YYDEBUG 1
+%}
 
 %code top{
   #include "heading.h"
-  #include "tokens.h"
+  // #include "tokens.h"
   #include "ast.h"
 
 
-  int yyerror(char *s);
+  void yyerror(const char *s);
   int yylex(void);
   extern int yylineno;	// defined and maintained in lex.c
   extern char *yytext;	// defined and maintained in lex.c
   AST *tree;
+
+  char *no_data = "no data";
+
+  // yydebug = 1;
 }
 
 %code requires {
   #include "ast.h"
 }
 
+
 %union{
-  int value;
-  char name[64];
+  char *name;
   AST * tree;
 }
 
-%token TYPE_DEF_TOK 0
+%define parse.error verbose
+%expect 1
 
-%token OPEN_PAREN_TOK 1 
-%token END_PAREN_TOK 2
-%token OPEN_BRACE_TOK 3
-%token END_BRACE_TOK 4
+%token <name> INT_DEC
+%token <name> BOOL_DEC
 
-%token SEMICOLON_TOK 5
-%token COMMA_TOK 6
+%token <name> NUMBER
+%token <name> STRING
+%token <name> BOOL
+%token <name> VOID
 
-%token INT_EQ_OP_TOK 7
-%token INT_ADD_OP_TOK 8
-%token INT_MULT_OP_TOK 9
-%token BOOL_OP_ADD_TOK 10
-%token BOOL_OP_OR_TOK 11
-%token BOOL_OP_UN_TOK 12
-%token EQUALITY_TOK 13
-%token ASSIGNMENT_TOK 14
+%token <name> OPEN_PAREN 
+%token <name> END_PAREN
+%token <name> OPEN_BRACE
+%token <name> END_BRACE
 
-%token IDENTIFIER_TOK 15
+%token <name> SEMICOLON
+%token <name> COMMA
 
-%token BOOL_LIT_TOK 16
-%token STR_LIT_TOK 17
-%token INT_LIT_TOK 18
-
-%token IF_TOK 19
-%token ELSE_TOK 20
-%token WHILE_TOK 21
-%token BREAK_TOK 22
-%token RETURN_TOK 23
+%token <name> MULT
+%token <name> DIV
+%token <name> MOD
+%token <name> ADD
+%token <name> SUB
 
 
-%type <name> identifier;
+%token <name> GT
+%token <name> LT
+%token <name> GTE
+%token <name> LTE
+
+%token <name> EQ
+%token <name> NEQ
+
+%token <name> NEG
+%token <name> NOT
+
+%token <name> AND
+%token <name> OR
+
+%token <name> ASSIGNMENT
+
+%token <name> IDENTIFIER
+
+%token <name> IF
+%token <name> ELSE
+%token <name> WHILE
+%token <name> BREAK
+%token <name> RETURN
+
+// Tokens used for tree creation
+%token NO_TYPE
+%token VAR_DEC
+%token GLOBAL_DEC
+%token FUNC_DEC
+%token FUNC_DECL
+%token FUNC_HEAD
+%token MAIN_FUNC
+%token ARG_LIST
+%token FUNC_INVOKE
+%token BLOCK_STATE
+%token PARAM_LIST
+%token BLOCK
+
+%type <tree> start;
+%type <tree> literal;
+%type <tree> type;
+%type <tree> identifier;
+%type <tree> globaldeclarations;
+%type <tree> globaldeclaration;
+%type <tree> variabledeclaration;
+%type <tree> functiondeclaration;
+%type <tree> functionheader;
+%type <tree> functiondeclarator;
+%type <tree> formalparameterlist;
+%type <tree> formalparameter;
+%type <tree> mainfunctiondeclaration;
+%type <tree> mainfunctiondeclarator;
+%type <tree> block;
+%type <tree> blockstatements;
+%type <tree> blockstatement;
+%type <tree> statement;
+%type <tree> statementexpression;
+%type <tree> primary;
+%type <tree> argumentlist;
+%type <tree> functioninvocation;
+%type <tree> postfixexpression;
+%type <tree> unaryexpression;
+%type <tree> multiplicativeexpression;
+%type <tree> additiveexpression;
+%type <tree> relationalexpression;
+%type <tree> equalityexpression;
+%type <tree> conditionalandexpression;
+%type <tree> conditionalorexpression;
+%type <tree> assignmentexpression;
+%type <tree> assignment;
+%type <tree> expression;
 %%
+// TODO: add proper newlines
 
-start           : /* empty */
-                | globaldeclarations {$<tree>$ = make_new_node("start");}; 
-                ;
+start:
+   /* empty */
+ | globaldeclarations {std::cout << ast_to_string($$, 0) << "\n"; exit(0);};
+ ;
 
-literal         : BOOL_LIT_TOK
-                | STR_LIT_TOK
-                | INT_LIT_TOK
-                ;
+literal:
+   NUMBER {$$ = make_new_node(NUMBER, $1, 0);};
+ | STRING {$$ = make_new_node(STRING, $1, 0);};
+ | BOOL   {$$ = make_new_node(BOOL, $1, 0);};
+ | VOID   {$$ = make_new_node(VOID, $1, 0);};
+ ;
 
-type            : TYPE_DEF_TOK
-                ;
+type:
+   BOOL_DEC {$$ = make_new_node(BOOL_DEC, $1, 0);};
+ | INT_DEC {$$ = make_new_node(INT_DEC, $1, 0);};
+ ;
 
-identifier              : IDENTIFIER_TOK {$<tree>$ = make_new_node(yytext);}; 
-                        ;
+globaldeclarations:
+   globaldeclaration {$$ = make_new_node(GLOBAL_DEC, no_data, 1, $1);};
+ | globaldeclarations globaldeclaration {$$ = make_new_node(GLOBAL_DEC, no_data, 2, $1, $2);};
+ ;
 
-globaldeclarations      : globaldeclaration
-                        | globaldeclarations globaldeclaration
-                        ;
+globaldeclaration:
+   variabledeclaration
+ | functiondeclaration 
+ | mainfunctiondeclaration 
+ ;
 
-globaldeclaration       : variabledeclaration
-                        | functiondeclaration
-                        | mainfunctiondeclaration
-                        ;
+variabledeclaration:
+   type identifier SEMICOLON {$$ = make_new_node(VAR_DEC, no_data, 2, $1, $2);};
+ ;
 
-variabledeclaration     : type identifier SEMICOLON_TOK
-                        ;
+identifier:
+   IDENTIFIER {$$ = make_new_node(IDENTIFIER, $1, 0);};
+ ;
 
-functiondeclaration     : functionheader block
-                        ;
+mainfunctiondeclaration:
+   mainfunctiondeclarator block                                       {$$ = make_new_node(MAIN_FUNC, no_data, 2, $1, $2);};
+ ;
 
-functionheader          : type functiondeclarator
-                        ;
+mainfunctiondeclarator:
+   identifier OPEN_PAREN END_PAREN
+ ;
 
-functiondeclarator      : identifier OPEN_PAREN_TOK formalparameterlist END_PAREN_TOK
-                        | identifier OPEN_PAREN_TOK END_PAREN_TOK
-                        ;
 
-formalparameterlist     : formalparameter
-                        | formalparameterlist COMMA_TOK formalparameter
-                        ;
+functiondeclaration:
+   functionheader block {$$ = make_new_node(FUNC_DEC, no_data, 2, $1, $2);};
+ ;
 
-formalparameter         : type identifier
-                        ;
+functionheader:
+   type functiondeclarator  {$$ = make_new_node(FUNC_HEAD, no_data, 2, $1, $2);};
+ ;
 
-mainfunctiondeclaration : mainfunctiondeclarator block
-                        ;
+functiondeclarator:
+   identifier OPEN_PAREN formalparameterlist END_PAREN {$$ = make_new_node(FUNC_DECL, no_data, 2, $1, $3);};
+ | identifier OPEN_PAREN END_PAREN
+ ;
 
-mainfunctiondeclarator  : identifier OPEN_PAREN_TOK END_PAREN_TOK
-                        ;
+formalparameterlist:
+   formalparameter
+ | formalparameterlist COMMA formalparameter {$$ = make_new_node(PARAM_LIST, no_data, 2, $1, $3);};
+ ;
 
-block                   : OPEN_BRACE_TOK blockstatements END_BRACE_TOK
-                        | OPEN_BRACE_TOK END_BRACE_TOK
-                        ;
+formalparameter:
+   type identifier                                                   {$$ = make_new_node(NO_TYPE, no_data, 2, $1, $2);};
+ ;
 
-blockstatements         : blockstatement
-                        | blockstatements blockstatement
-                        ;
+block:
+   OPEN_BRACE blockstatements END_BRACE                              {$$ = make_new_node(BLOCK, no_data, 1, $2);};
+ | OPEN_BRACE END_BRACE                                              {$$ = make_new_node(NO_TYPE, no_data, 0);};
+ ;
 
-blockstatement          : variabledeclaration
-                        | statement
-                        ;
+blockstatements:
+   blockstatement
+ | blockstatements blockstatement                                    {$$ = make_new_node(BLOCK_STATE, no_data, 2, $1, $2);};
+ ;
 
-statement               : block
-                        | SEMICOLON_TOK
-                        | statementexpression SEMICOLON_TOK
-                        | BREAK_TOK SEMICOLON_TOK
-                        | RETURN_TOK expression SEMICOLON_TOK
-                        | RETURN_TOK SEMICOLON_TOK
-                        | IF_TOK OPEN_PAREN_TOK expression END_PAREN_TOK statement
-                        | IF_TOK OPEN_PAREN_TOK expression END_PAREN_TOK statement ELSE_TOK statement
-                        | WHILE_TOK OPEN_PAREN_TOK expression END_PAREN_TOK statement
-                        ;
+blockstatement:
+   variabledeclaration
+ | statement
+ ;
 
-statementexpression     : assignment
-                        | functioninvocation
-                        ;
+statement:
+   block
+ | SEMICOLON                                                        {$$ = make_new_node(NO_TYPE, no_data, 0);};
+ | statementexpression SEMICOLON                                    {$$ = $1;};
+ | BREAK SEMICOLON                                                  {$$ = make_new_node(BREAK, $1, 0);};
+ | RETURN expression SEMICOLON                                      {$$ = make_new_node(BREAK, $1, 1, $2);};
+ | RETURN SEMICOLON                                                 {$$ = make_new_node(RETURN, $1, 0);};
+ | IF OPEN_PAREN expression END_PAREN statement                     {$$ = make_new_node(IF, no_data, 2, $3, $5);};
+ | IF OPEN_PAREN expression END_PAREN statement ELSE statement      {$$ = make_new_node(ELSE, no_data, 3, $3, $5, $7);};
+ | WHILE OPEN_PAREN expression END_PAREN statement                  {$$ = make_new_node(WHILE, no_data, 2, $3, $5);};
+ ;
 
-primary                 : literal
-                        | OPEN_PAREN_TOK expression END_PAREN_TOK
-                        | functioninvocation
-                        ;
+statementexpression:
+   assignment
+ | functioninvocation
+ ;
 
-argumentlist            : expression
-                        | argumentlist COMMA_TOK expression
-                        ;
+primary:
+   literal
+ | OPEN_PAREN expression END_PAREN                                  {$$ = $2;};
+ | functioninvocation
+ ;
 
-functioninvocation      : identifier OPEN_PAREN_TOK argumentlist END_PAREN_TOK
-                        | identifier OPEN_PAREN_TOK END_PAREN_TOK
-                        ;
+argumentlist:
+   expression
+ | argumentlist COMMA expression                                    {$$ = make_new_node(ARG_LIST, no_data, 2, $1, $3);};
+ ;
 
-postfixexpression       : primary
-                        | identifier
-                        ;
+functioninvocation:
+   identifier OPEN_PAREN argumentlist END_PAREN                     {$$ = make_new_node(FUNC_INVOKE, no_data, 2, $1, $3);};
+ | identifier OPEN_PAREN END_PAREN                                  {$$ = make_new_node(FUNC_INVOKE, no_data, 1, $1);};
+ ;
 
-unaryexpression         : '-' unaryexpression
-                        | '!' unaryexpression
-                        | postfixexpression
-                        ;
+postfixexpression:
+   primary
+ | identifier
+ ;
 
-multiplicativeexpression: unaryexpression
-                        | multiplicativeexpression INT_MULT_OP_TOK unaryexpression
-                        ;
+unaryexpression:
+   NEG unaryexpression                                              {$$ = make_new_node(NEG, no_data, 1, $2);};
+ | NOT unaryexpression                                              {$$ = make_new_node(NOT, no_data, 1, $2);};
+ | postfixexpression
+ ;
 
-additiveexpression      : multiplicativeexpression
-                        | additiveexpression INT_ADD_OP_TOK multiplicativeexpression
-                        ;
+multiplicativeexpression: 
+   unaryexpression
+ | multiplicativeexpression MULT unaryexpression                    {$$ = make_new_node(MULT, no_data, 2, $1, $3);};
+ | multiplicativeexpression DIV unaryexpression                     {$$ = make_new_node(DIV, no_data, 2, $1, $3);};
+ | multiplicativeexpression MOD unaryexpression                     {$$ = make_new_node(MOD, no_data, 2, $1, $3);};
+ ;
 
-relationalexpression    : additiveexpression
-                        | relationalexpression INT_EQ_OP_TOK additiveexpression
-                        ;
+additiveexpression:
+   multiplicativeexpression
+ | additiveexpression ADD multiplicativeexpression                  {$$ = make_new_node(ADD, no_data, 2, $1, $3);};
+ | additiveexpression SUB multiplicativeexpression                  {$$ = make_new_node(SUB, no_data, 2, $1, $3);};
+ ;
 
-equalityexpression      : relationalexpression
-                        | equalityexpression EQUALITY_TOK relationalexpression
-                        ;
+relationalexpression:
+   additiveexpression
+ | relationalexpression LT additiveexpression {$$ = make_new_node(LT, no_data, 2, $1, $3);};
+ | relationalexpression GT additiveexpression {$$ = make_new_node(GT, no_data, 2, $1, $3);};
+ | relationalexpression LTE additiveexpression {$$ = make_new_node(LTE, no_data, 2, $1, $3);};
+ | relationalexpression GTE additiveexpression {$$ = make_new_node(GTE, no_data, 2, $1, $3);};
+ ;
+
+equalityexpression:
+   relationalexpression
+ | equalityexpression EQ relationalexpression {$$ = make_new_node(EQ, no_data, 2, $1, $3);};
+ | equalityexpression NEQ relationalexpression {$$ = make_new_node(NEQ, no_data, 2, $1, $3);};
+ ;
 
 conditionalandexpression: equalityexpression
-                        | conditionalandexpression BOOL_OP_ADD_TOK equalityexpression
-                        ;
+ | conditionalandexpression AND equalityexpression {$$ = make_new_node(AND, no_data, 2, $1, $3);};
+ ;
 
-conditionalorexpression : conditionalandexpression
-                        | conditionalorexpression BOOL_OP_OR_TOK conditionalandexpression
-                        ;
+conditionalorexpression:
+   conditionalandexpression
+ | conditionalorexpression OR conditionalandexpression {$$ = make_new_node(OR, no_data, 2, $1, $3);};
+ ;
 
-assignmentexpression    : conditionalorexpression
-                        | assignment
-                        ;
+assignmentexpression:
+   conditionalorexpression
+ | assignment
+ ;
 
-assignment              : identifier ASSIGNMENT_TOK assignmentexpression
-                        ;
+assignment:
+   identifier ASSIGNMENT assignmentexpression {$$ = make_new_node(ASSIGNMENT, no_data, 2, $1, $3);};
+ ;
 
-expression              : assignmentexpression
-                        ;
+expression:
+   assignmentexpression 
+ ;
 %%
 
-int yyerror(string s)
+void yyerror(const char *s)
 {
-
-  
-  cerr << "ERROR: " << s << " at symbol \"" << yytext;
-  cerr << "\" on line " << IDENTIFIER << endl;
-  exit(1);
-}
-
-int yyerror(char *s)
-{
-  return yyerror(string(s));
+  fprintf (stderr, "line no: %i   %s\n", yylineno, s);
+  exit(-1);
 }

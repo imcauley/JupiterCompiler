@@ -1,7 +1,5 @@
 /* main.cc */
-
 #include "heading.h"
-
 // prototype of bison-generated parser function
 int yyparse();
 
