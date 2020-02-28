@@ -1,0 +1,314 @@
+Testing file: 
+&Compiler Output:
+=================================
+Testing file: 
+boolean test;Compiler Output:
+
+GLOBAL_DEC data=no data[ 
+VAR_DEC data=no data[ 
+BOOL_DEC data=boolean[ 
+]
+  IDENTIFIER data=test[ 
+  ]
+]
+]
+=================================
+Testing file: 
+main() {
+    int test;
+    test = 42;
+}Compiler Output:
+
+GLOBAL_DEC data=no data[ 
+MAIN_FUNC data=no data[ 
+IDENTIFIER data=main[ 
+]
+  BLOCK data=no data[ 
+  BLOCK_STATE data=no data[ 
+  VAR_DEC data=no data[ 
+  INT_DEC data=int[ 
+  ]
+    IDENTIFIER data=test[ 
+    ]
+  ]
+    ASSIGNMENT data=no data[ 
+    IDENTIFIER data=test[ 
+    ]
+      NUMBER data=42[ 
+      ]
+    ]
+  ]
+  ]
+]
+]
+=================================
+Testing file: 
+int test;Compiler Output:
+
+GLOBAL_DEC data=no data[ 
+VAR_DEC data=no data[ 
+INT_DEC data=int[ 
+]
+  IDENTIFIER data=test[ 
+  ]
+]
+]
+=================================
+Testing file: 
+int test1;
+int test2;
+int test3;
+int test4;Compiler Output:
+
+GLOBAL_DEC data=no data[ 
+VAR_DEC data=no data[ 
+INT_DEC data=int[ 
+]
+  IDENTIFIER data=test1[ 
+  ]
+]
+  VAR_DEC data=no data[ 
+  INT_DEC data=int[ 
+  ]
+    IDENTIFIER data=test2[ 
+    ]
+  ]
+    VAR_DEC data=no data[ 
+    INT_DEC data=int[ 
+    ]
+      IDENTIFIER data=test3[ 
+      ]
+    ]
+      VAR_DEC data=no data[ 
+      INT_DEC data=int[ 
+      ]
+        IDENTIFIER data=test4[ 
+        ]
+      ]
+]
+=================================
+Testing file: 
+main() {
+        int i;
+        i = 0;
+
+        //  Anything larger than 47 overflows an int..
+        //
+        while (i <= 47) {
+                prints("fib(");
+                printi(i);
+                prints(") = ");
+                printi(fib(i));
+                prints("\n");
+                i = i + 1;
+        }
+}
+
+int fib(int n) {
+        if (n == 0) return 0;
+        if (n == 1) return 1;
+        return fib(n-1) + fib(n-2);
+}Compiler Output:
+
+GLOBAL_DEC data=no data[ 
+MAIN_FUNC data=no data[ 
+IDENTIFIER data=main[ 
+]
+  BLOCK data=no data[ 
+  BLOCK_STATE data=no data[ 
+  VAR_DEC data=no data[ 
+  INT_DEC data=int[ 
+  ]
+    IDENTIFIER data=i[ 
+    ]
+  ]
+    ASSIGNMENT data=no data[ 
+    IDENTIFIER data=i[ 
+    ]
+      NUMBER data=0[ 
+      ]
+    ]
+      WHILE data=no data[ 
+      LTE data=no data[ 
+      IDENTIFIER data=i[ 
+      ]
+        NUMBER data=47[ 
+        ]
+      ]
+        BLOCK data=no data[ 
+        BLOCK_STATE data=no data[ 
+        FUNC_INVOKE data=no data[ 
+        IDENTIFIER data=prints[ 
+        ]
+          STRING data="fib("[ 
+          ]
+        ]
+          FUNC_INVOKE data=no data[ 
+          IDENTIFIER data=printi[ 
+          ]
+            IDENTIFIER data=i[ 
+            ]
+          ]
+            FUNC_INVOKE data=no data[ 
+            IDENTIFIER data=prints[ 
+            ]
+              STRING data=") = "[ 
+              ]
+            ]
+              FUNC_INVOKE data=no data[ 
+              IDENTIFIER data=printi[ 
+              ]
+                FUNC_INVOKE data=no data[ 
+                IDENTIFIER data=fib[ 
+                ]
+                  IDENTIFIER data=i[ 
+                  ]
+                ]
+              ]
+                FUNC_INVOKE data=no data[ 
+                IDENTIFIER data=prints[ 
+                ]
+                  STRING data="\n"[ 
+                  ]
+                ]
+                  ASSIGNMENT data=no data[ 
+                  IDENTIFIER data=i[ 
+                  ]
+                    ADD data=no data[ 
+                    IDENTIFIER data=i[ 
+                    ]
+                      NUMBER data=1[ 
+                      ]
+                    ]
+                  ]
+        ]
+        ]
+      ]
+  ]
+  ]
+]
+  FUNC_DEC data=no data[ 
+  FUNC_HEAD data=no data[ 
+  INT_DEC data=int[ 
+  ]
+    FUNC_DECL data=no data[ 
+    IDENTIFIER data=fib[ 
+    ]
+      NO_TYPE data=no data[ 
+      INT_DEC data=int[ 
+      ]
+        IDENTIFIER data=n[ 
+        ]
+      ]
+    ]
+  ]
+    BLOCK data=no data[ 
+    BLOCK_STATE data=no data[ 
+    IF data=no data[ 
+    EQ data=no data[ 
+    IDENTIFIER data=n[ 
+    ]
+      NUMBER data=0[ 
+      ]
+    ]
+      BREAK data=return[ 
+      NUMBER data=0[ 
+      ]
+      ]
+    ]
+      IF data=no data[ 
+      EQ data=no data[ 
+      IDENTIFIER data=n[ 
+      ]
+        NUMBER data=1[ 
+        ]
+      ]
+        BREAK data=return[ 
+        NUMBER data=1[ 
+        ]
+        ]
+      ]
+        BREAK data=return[ 
+        ADD data=no data[ 
+        FUNC_INVOKE data=no data[ 
+        IDENTIFIER data=fib[ 
+        ]
+          IDENTIFIER data=n-1[ 
+          ]
+        ]
+          FUNC_INVOKE data=no data[ 
+          IDENTIFIER data=fib[ 
+          ]
+            IDENTIFIER data=n-2[ 
+            ]
+          ]
+        ]
+        ]
+    ]
+    ]
+  ]
+]
+=================================
+Testing file: 
+howdy() {
+        prints("Hello, world!\n");
+}
+ int test() {
+     return 5;
+ }Compiler Output:
+
+GLOBAL_DEC data=no data[ 
+MAIN_FUNC data=no data[ 
+IDENTIFIER data=howdy[ 
+]
+  BLOCK data=no data[ 
+  BLOCK_STATE data=no data[ 
+  FUNC_INVOKE data=no data[ 
+  IDENTIFIER data=prints[ 
+  ]
+    STRING data="Hello, world!\n"[ 
+    ]
+  ]
+  ]
+  ]
+]
+  FUNC_DEC data=no data[ 
+  FUNC_HEAD data=no data[ 
+  INT_DEC data=int[ 
+  ]
+    IDENTIFIER data=test[ 
+    ]
+  ]
+    BLOCK data=no data[ 
+    BLOCK_STATE data=no data[ 
+    BREAK data=return[ 
+    NUMBER data=5[ 
+    ]
+    ]
+    ]
+    ]
+  ]
+]
+=================================
+Testing file: 
+main() {
+    int test;
+}Compiler Output:
+
+GLOBAL_DEC data=no data[ 
+MAIN_FUNC data=no data[ 
+IDENTIFIER data=main[ 
+]
+  BLOCK data=no data[ 
+  BLOCK_STATE data=no data[ 
+  VAR_DEC data=no data[ 
+  INT_DEC data=int[ 
+  ]
+    IDENTIFIER data=test[ 
+    ]
+  ]
+  ]
+  ]
+]
+]
+=================================

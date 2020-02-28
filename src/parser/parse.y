@@ -147,8 +147,10 @@ type:
  ;
 
 globaldeclarations:
-   globaldeclaration {$$ = make_new_node(GLOBAL_DEC, no_data, 1, $1);};
- | globaldeclarations globaldeclaration {$$ = make_new_node(GLOBAL_DEC, no_data, 2, $1, $2);};
+   globaldeclaration                                                {$$ = make_new_node(GLOBAL_DEC, no_data, 1, $1);};
+ | globaldeclarations globaldeclaration                             {$$ = $1;
+                                                                     add_child($$, $2);
+                                                                    };
  ;
 
 globaldeclaration:
@@ -202,8 +204,10 @@ block:
  ;
 
 blockstatements:
-   blockstatement
- | blockstatements blockstatement                                    {$$ = make_new_node(BLOCK_STATE, no_data, 2, $1, $2);};
+   blockstatement                                                    {$$ = make_new_node(BLOCK_STATE, no_data, 1, $1);};
+ | blockstatements blockstatement                                    {$$ = $1;
+                                                                      add_child($$, $2);
+                                                                     };
  ;
 
 blockstatement:

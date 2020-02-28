@@ -36,6 +36,10 @@ AST* make_new_node(int type, char* name, int num_children...) {
     return new_node;
 }
 
+void combine_nodes(AST* parent, AST* children) {
+    parent->children.insert(parent->children.end(), children->children.begin(), children->children.end());
+}
+
 void add_child(AST* node, AST* child) {
     node->children.push_back(child);
 }
