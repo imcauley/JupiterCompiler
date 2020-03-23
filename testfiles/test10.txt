@@ -1,0 +1,7 @@
+int test_func(int test2) {
+    return 1;
+}
+
+main() {
+    int t;
+}

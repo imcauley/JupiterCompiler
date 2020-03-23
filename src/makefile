@@ -9,7 +9,7 @@ DATA_DIR = ./data/
 CC	= g++
 CFLAGS	= -g -Wall -ansi -pedantic -I$(HEAD_DIR) -Wno-write-strings
 
-OBJS	= $(BIN_DIR)bison.o $(BIN_DIR)lex.o $(BIN_DIR)main.o $(BIN_DIR)tokens.o $(BIN_DIR)ast.o $(BIN_DIR)token_map.o $(BIN_DIR)semantics.o
+OBJS	= $(BIN_DIR)bison.o $(BIN_DIR)lex.o $(BIN_DIR)main.o $(BIN_DIR)tokens.o $(BIN_DIR)ast.o $(BIN_DIR)token_map.o $(BIN_DIR)semantics.o $(BIN_DIR)symbol_table.o
 
 compiler:		$(OBJS)
 		$(CC) -DYYDEBUG $(CFLAGS) $(OBJS) -o ../compiler -lfl
@@ -44,6 +44,10 @@ $(BIN_DIR)ast.o:	$(DATA_DIR)ast.cpp  ${BIN_DIR}token_map.o
 
 $(BIN_DIR)semantics.o: $(DATA_DIR)semantics.cpp $(BIN_DIR)ast.o $(BIN_DIR)bison.o
 	$(CC) $(CFLAGS) -c $(DATA_DIR)semantics.cpp -o $(BIN_DIR)semantics.o
+
+$(BIN_DIR)symbol_table.o: $(DATA_DIR)symbol_table.cpp $(BIN_DIR)ast.o $(BIN_DIR)bison.o
+	$(CC) $(CFLAGS) -c $(DATA_DIR)symbol_table.cpp -o $(BIN_DIR)symbol_table.o
+
 
 lex.o yac.o main.o	: $(HEAD_DIR)heading.h
 lex.o main.o bison.c 	: $(HEAD_DIR)tokens.h
