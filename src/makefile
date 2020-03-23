@@ -9,7 +9,10 @@ DATA_DIR = ./data/
 CC	= g++
 CFLAGS	= -g -Wall -ansi -pedantic -I$(HEAD_DIR) -Wno-write-strings
 
-OBJS	= $(BIN_DIR)bison.o $(BIN_DIR)lex.o $(BIN_DIR)main.o $(BIN_DIR)tokens.o $(BIN_DIR)ast.o $(BIN_DIR)token_map.o $(BIN_DIR)semantics.o $(BIN_DIR)symbol_table.o
+LOGIC = $(BIN_DIR)main.o $(BIN_DIR)bison.o $(BIN_DIR)lex.o $(BIN_DIR)semantics.o
+DATA = $(BIN_DIR)tokens.o $(BIN_DIR)ast.o $(BIN_DIR)token_map.o $(BIN_DIR)symbol_table.o
+
+OBJS = $(LOGIC) $(DATA)
 
 compiler:		$(OBJS)
 		$(CC) -DYYDEBUG $(CFLAGS) $(OBJS) -o ../compiler -lfl
@@ -17,8 +20,8 @@ compiler:		$(OBJS)
 $(BIN_DIR)lex.o:	lex.yy.c
 		$(CC) $(CFLAGS) -c $(SCANNER_DIR)lex.yy.c -o $(BIN_DIR)lex.o
 
-lex.yy.c:		./scanner/scan.l 
-		flex ./scanner/scan.l
+lex.yy.c:	$(SCANNER_DIR)scan.l 
+		flex $(SCANNER_DIR)scan.l
 		@ mv lex.yy.c $(SCANNER_DIR)lex.yy.c
 
 $(BIN_DIR)bison.o:	bison.c
@@ -42,7 +45,7 @@ $(BIN_DIR)main.o:		main.cc
 $(BIN_DIR)ast.o:	$(DATA_DIR)ast.cpp  ${BIN_DIR}token_map.o
 	$(CC) $(CFLAGS) -c $(DATA_DIR)ast.cpp -o $(BIN_DIR)ast.o
 
-$(BIN_DIR)semantics.o: $(DATA_DIR)semantics.cpp $(BIN_DIR)ast.o $(BIN_DIR)bison.o
+$(BIN_DIR)semantics.o: $(DATA_DIR)semantics.cpp $(BIN_DIR)ast.o $(BIN_DIR)bison.o $(BIN_DIR)symbol_table.o
 	$(CC) $(CFLAGS) -c $(DATA_DIR)semantics.cpp -o $(BIN_DIR)semantics.o
 
 $(BIN_DIR)symbol_table.o: $(DATA_DIR)symbol_table.cpp $(BIN_DIR)ast.o $(BIN_DIR)bison.o

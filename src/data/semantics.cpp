@@ -28,3 +28,15 @@ bool contains_type(AST* tree, int node_type) {
     }
     return false;
 }
+
+sym_table *make_sym_table(AST* tree) {
+    std::vector<AST*> nodes_to_vist;
+    AST* current = tree;
+
+    while(current != NULL || nodes_to_vist.empty() != false) {
+        if(current->type == VAR_DEC) {
+            int i = 1;
+        }
+    }
+    return NULL;
+}

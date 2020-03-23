@@ -3,8 +3,11 @@
 
 #include "ast.h"
 #include "parse.h"
+#include "symbol_table.h"
 
 bool check_for_main(AST* tree);
 bool contains_type(AST* tree, int node_type);
+
+sym_table *make_sym_table(AST* tree);
 
 #endif

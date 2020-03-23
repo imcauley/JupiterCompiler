@@ -1,23 +1,27 @@
-#ifndef SEM_H
-#define SEM_H
+#ifndef SYM_M
+#define SYM_M
 
 #include "parse.h"
 #include <map> 
 #include <vector>
+#include <string>
 
 typedef struct symbol {
-    int id;
+    std::string id;
     int type;
 } symbol;
 
-typedef map<int,*symbol> scope;
+typedef std::map<std::string,symbol*> scope;
+typedef std::pair<std::string,symbol*> scope_pair;
 
-typedef struct symbol_table {
-    std::vector<*scope> scope_stack;
+typedef struct sym_table {
+    std::vector<scope*> scope_stack;
 
-} symbol_table;
+} sym_table;
 
 
-
-void open_scope();
+void    open_scope(sym_table *table);
+void    exit_scope(sym_table *table);
+symbol* get_symbol(sym_table *table, std::string id);
+bool    add_symbol(sym_table *table, symbol *sym);
 #endif
