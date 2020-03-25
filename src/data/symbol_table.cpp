@@ -15,7 +15,6 @@ symbol* get_symbol(sym_table *table, std::string id) {
             return (*(table->scope_stack[i]))[id];
         }
     }
-
     return NULL;
 }
 
@@ -24,7 +23,6 @@ symbol* get_symbol_in_scope(sym_table *table, std::string id) {
     if( table->scope_stack[s]->count(id) > 0) {
         return (*(table->scope_stack[s]))[id];
     }
-
     return NULL;
 }
 
