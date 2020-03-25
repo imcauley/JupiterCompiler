@@ -40,7 +40,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 22 "./parser/parse.y" /* yacc.c:1910  */
+#line 25 "./parser/parse.y" /* yacc.c:1910  */
 
   #include "ast.h"
 
@@ -96,7 +96,9 @@ extern int yydebug;
     FUNC_INVOKE = 300,
     BLOCK_STATE = 301,
     PARAM_LIST = 302,
-    BLOCK = 303
+    FORM_PARAM = 303,
+    BLOCK = 304,
+    ROOT = 305
   };
 #endif
 
@@ -105,12 +107,12 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 27 "./parser/parse.y" /* yacc.c:1910  */
+#line 30 "./parser/parse.y" /* yacc.c:1910  */
 
   char *name;
   AST * tree;
 
-#line 114 "./parser/parse.tab.h" /* yacc.c:1910  */
+#line 116 "./parser/parse.tab.h" /* yacc.c:1910  */
 };
 
 typedef union YYSTYPE YYSTYPE;

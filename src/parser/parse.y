@@ -2,6 +2,7 @@
   #define YYDEBUG 1
 %}
 
+
 %code top{
   #include "heading.h"
   // #include "tokens.h"
@@ -12,6 +13,8 @@
   int yylex(void);
   extern int yylineno;	// defined and maintained in lex.c
   extern char *yytext;	// defined and maintained in lex.c
+
+  extern AST* final_tree;
   AST *tree;
 
   char *no_data = "no data";
@@ -91,7 +94,9 @@
 %token FUNC_INVOKE
 %token BLOCK_STATE
 %token PARAM_LIST
+%token FORM_PARAM
 %token BLOCK
+%token ROOT
 
 %type <tree> start;
 %type <tree> literal;
@@ -127,11 +132,12 @@
 %type <tree> assignment;
 %type <tree> expression;
 %%
-// TODO: add proper newlines
 
 start:
    /* empty */
- | globaldeclarations {std::cout << ast_to_string($$, 0) << "\n"; exit(0);};
+ | globaldeclarations {$$ = make_new_node(ROOT, no_data, 1, $1);
+                      final_tree = $$;
+                      };
  ;
 
 literal:
@@ -190,12 +196,14 @@ functiondeclarator:
  ;
 
 formalparameterlist:
-   formalparameter
- | formalparameterlist COMMA formalparameter {$$ = make_new_node(PARAM_LIST, no_data, 2, $1, $3);};
+   formalparameter                            {$$ = make_new_node(PARAM_LIST, no_data, 1, $1);};
+ | formalparameterlist COMMA formalparameter  {$$ = $1;
+                                               add_child($$, $3);
+                                              };
  ;
 
 formalparameter:
-   type identifier                                                   {$$ = make_new_node(NO_TYPE, no_data, 2, $1, $2);};
+   type identifier                                                   {$$ = make_new_node(FORM_PARAM, no_data, 2, $1, $2);};
  ;
 
 block:

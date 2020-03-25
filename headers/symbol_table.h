@@ -23,5 +23,6 @@ typedef struct sym_table {
 void    open_scope(sym_table *table);
 void    exit_scope(sym_table *table);
 symbol* get_symbol(sym_table *table, std::string id);
+symbol* get_symbol_in_scope(sym_table *table, std::string id);
 bool    add_symbol(sym_table *table, symbol *sym);
 #endif

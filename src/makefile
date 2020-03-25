@@ -39,8 +39,8 @@ ${BIN_DIR}token_map.o:
 	python3 $(PARSER_DIR)convert_tokens.py
 	$(CC) $(CFLAGS) -c $(PARSER_DIR)token_map.c -o $(BIN_DIR)token_map.o
 
-$(BIN_DIR)main.o:		main.cc
-		$(CC) $(CFLAGS) -c main.cc -o $(BIN_DIR)main.o
+$(BIN_DIR)main.o:		main.cpp
+		$(CC) $(CFLAGS) -c main.cpp -o $(BIN_DIR)main.o
 
 $(BIN_DIR)ast.o:	$(DATA_DIR)ast.cpp  ${BIN_DIR}token_map.o
 	$(CC) $(CFLAGS) -c $(DATA_DIR)ast.cpp -o $(BIN_DIR)ast.o

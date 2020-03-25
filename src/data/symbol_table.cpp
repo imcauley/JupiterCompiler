@@ -19,6 +19,16 @@ symbol* get_symbol(sym_table *table, std::string id) {
     return NULL;
 }
 
+symbol* get_symbol_in_scope(sym_table *table, std::string id) {
+    int s = table->scope_stack.size() - 1;
+    if( table->scope_stack[s]->count(id) > 0) {
+        return (*(table->scope_stack[s]))[id];
+    }
+
+    return NULL;
+}
+
+
 bool add_symbol(sym_table *table, symbol *sym) {
     (table->scope_stack.back())->insert( scope_pair(sym->id, sym) );
     return true;

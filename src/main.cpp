@@ -7,8 +7,10 @@
 #include "symbol_table.h"
 
 
-int data;
-// int yyparse(parse_tree);
+// int yyparse(final_tree);
+
+  AST *final_tree;
+
 
 int main(int argc, char **argv)
 {  
@@ -18,11 +20,11 @@ int main(int argc, char **argv)
     exit(1);
   }
   
-  AST *parse_tree;
-  sym_table *table;
-  // yyparse(parse_tree);
+
+  // sym_table *table = NULL;
+  yyparse();
   
 
-  // std::cout << parse_tree->type << "\n";
+  std::cout << ast_to_string(final_tree, 0) << "\n";
   return 0;
 }
