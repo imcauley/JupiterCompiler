@@ -1,4 +1,5 @@
 #include "semantics.h"
+#include "heading.h"
 
 bool check_for_main(AST* tree) {
     int main_index = 0;
@@ -43,7 +44,8 @@ void type_check(AST* tree, sym_table* table) {
         new_symbol->id = tree->children[1]->data;
 
         if(get_symbol_in_scope(table, new_symbol->id) != NULL) {
-            //ERROR IN SEMANTICS
+            fprintf(stderr, "Redeclaration of %s\n", new_symbol->id.c_str());
+            exit(-1);
         }
 
         add_symbol(table, new_symbol);
@@ -55,24 +57,42 @@ void type_check(AST* tree, sym_table* table) {
         new_symbol->id = tree->children[1]->children[1]->data;
 
         if(get_symbol_in_scope(table, new_symbol->id) != NULL) {
-            //ERROR IN SEMANTICS
+            fprintf(stderr, "Redeclaration of %s\n", new_symbol->id.c_str());
+            exit(-1);
+        }
+
+        add_symbol(table, new_symbol);
+        open_scope(table);
+        for(long unsigned int i = 0; i < tree->children.size(); i++) {
+            type_check(tree->children[i], table);
+        }
+        exit_scope(table);
+    }
+    else if(tree->type == FORM_PARAM) {
+        symbol *new_symbol = new symbol();
+        new_symbol->type = tree->children[0]->type;
+        new_symbol->id = tree->children[1]->data;
+
+        if(get_symbol_in_scope(table, new_symbol->id) != NULL) {
+            fprintf(stderr, "Redeclaration of %s\n", new_symbol->id.c_str());
+            exit(-1);
         }
 
         add_symbol(table, new_symbol);
     }
 
-    else if(tree->type == IDENTIFIER) {
-        if(get_symbol(table, tree->data) == NULL) {
-             //ERROR IN SEMANTICS
-        }
-    }
-    else if (tree->type == PARAM_LIST) {
-        for(int i = 0; i < tree->children.size(); i++) {
-            symbol *new_symbol = new symbol();
-            new_symbol->type = tree->children[i]->children[0]->type;
-            new_symbol->id = tree->children[i]->children[1]->data;
-        }
-    }
+    // else if(tree->type == IDENTIFIER) {
+    //     if(get_symbol(table, tree->data) == NULL) {
+    //          //ERROR IN SEMANTICS
+    //     }
+    // }
+    // else if (tree->type == PARAM_LIST) {
+    //     for(int i = 0; i < tree->children.size(); i++) {
+    //         symbol *new_symbol = new symbol();
+    //         new_symbol->type = tree->children[i]->children[0]->type;
+    //         new_symbol->id = tree->children[i]->children[1]->data;
+    //     }
+    // }
     else {
         for(long unsigned int i = 0; i < tree->children.size(); i++) {
             type_check(tree->children[i], table);

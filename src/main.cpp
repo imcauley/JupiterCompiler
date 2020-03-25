@@ -9,7 +9,7 @@
 
 // int yyparse(final_tree);
 
-  AST *final_tree;
+AST *final_tree;
 
 
 int main(int argc, char **argv)
@@ -21,10 +21,12 @@ int main(int argc, char **argv)
   }
   
 
-  // sym_table *table = NULL;
+  sym_table *table = new sym_table;
+  open_scope(table);
+  // std::cout << (table->scope_stack).size() << "\n";
   yyparse();
-  
+  type_check(final_tree, table);
 
-  std::cout << ast_to_string(final_tree, 0) << "\n";
+  // std::cout << ast_to_string(final_tree, 0) << "\n";
   return 0;
 }

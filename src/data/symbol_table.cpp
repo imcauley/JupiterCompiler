@@ -30,6 +30,19 @@ symbol* get_symbol_in_scope(sym_table *table, std::string id) {
 
 
 bool add_symbol(sym_table *table, symbol *sym) {
-    (table->scope_stack.back())->insert( scope_pair(sym->id, sym) );
+    ((table->scope_stack).back())->insert( scope_pair(sym->id, sym) );
     return true;
+}
+
+bool type_exists(sym_table *table, int type) {
+    for(int i = table->scope_stack.size() - 1; i >= 0; i--) {
+        std::map<std::string, symbol*>::iterator it;
+        for ( it = table->scope_stack[i]->begin(); it != table->scope_stack[i]->end(); it++ ){
+            if(it->second->type == type) {
+                return true;
+            }
+        }
+    }
+
+    return false;
 }

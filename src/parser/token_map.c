@@ -45,7 +45,9 @@ case 299: return "ARG_LIST";
 case 300: return "FUNC_INVOKE";
 case 301: return "BLOCK_STATE";
 case 302: return "PARAM_LIST";
-case 303: return "BLOCK";
+case 303: return "FORM_PARAM";
+case 304: return "BLOCK";
+case 305: return "ROOT";
 default: return "ERROR";
 } 
 }
