@@ -29,10 +29,10 @@ Grammar
     3 literal: NUMBER
     4        | STRING
     5        | BOOL
-    6        | VOID
 
-    7 type: BOOL_DEC
-    8     | INT_DEC
+    6 type: BOOL_DEC
+    7     | INT_DEC
+    8     | VOID
 
     9 globaldeclarations: globaldeclaration
    10                   | globaldeclarations globaldeclaration
@@ -137,12 +137,12 @@ Terminals, with rules where they appear
 
 $end (0) 0
 error (256)
-INT_DEC (258) 8
-BOOL_DEC (259) 7
+INT_DEC (258) 7
+BOOL_DEC (259) 6
 NUMBER (260) 3
 STRING (261) 4
 BOOL (262) 5
-VOID (263) 6
+VOID (263) 8
 OPEN_PAREN (264) 17 20 21 37 38 39 43 47 48
 END_PAREN (265) 17 20 21 37 38 39 43 47 48
 OPEN_BRACE (266) 25 26
@@ -194,9 +194,9 @@ $accept (51)
 start (52)
     on left: 1 2, on right: 0
 literal (53)
-    on left: 3 4 5 6, on right: 42
+    on left: 3 4 5, on right: 42
 type (54)
-    on left: 7 8, on right: 14 19 24
+    on left: 6 7 8, on right: 14 19 24
 globaldeclarations (55)
     on left: 9 10, on right: 2 10
 globaldeclaration (56)
@@ -265,293 +265,303 @@ State 0
 
     INT_DEC     shift, and go to state 1
     BOOL_DEC    shift, and go to state 2
-    IDENTIFIER  shift, and go to state 3
+    VOID        shift, and go to state 3
+    IDENTIFIER  shift, and go to state 4
 
     $default  reduce using rule 1 (start)
 
-    start                    go to state 4
-    type                     go to state 5
-    globaldeclarations       go to state 6
-    globaldeclaration        go to state 7
-    variabledeclaration      go to state 8
-    identifier               go to state 9
-    mainfunctiondeclaration  go to state 10
-    mainfunctiondeclarator   go to state 11
-    functiondeclaration      go to state 12
-    functionheader           go to state 13
+    start                    go to state 5
+    type                     go to state 6
+    globaldeclarations       go to state 7
+    globaldeclaration        go to state 8
+    variabledeclaration      go to state 9
+    identifier               go to state 10
+    mainfunctiondeclaration  go to state 11
+    mainfunctiondeclarator   go to state 12
+    functiondeclaration      go to state 13
+    functionheader           go to state 14
 
 
 State 1
 
-    8 type: INT_DEC .
-
-    $default  reduce using rule 8 (type)
-
-
-State 2
-
-    7 type: BOOL_DEC .
+    7 type: INT_DEC .
 
     $default  reduce using rule 7 (type)
 
 
+State 2
+
+    6 type: BOOL_DEC .
+
+    $default  reduce using rule 6 (type)
+
+
 State 3
+
+    8 type: VOID .
+
+    $default  reduce using rule 8 (type)
+
+
+State 4
 
    15 identifier: IDENTIFIER .
 
     $default  reduce using rule 15 (identifier)
 
 
-State 4
+State 5
 
     0 $accept: start . $end
 
-    $end  shift, and go to state 14
+    $end  shift, and go to state 15
 
 
-State 5
+State 6
 
    14 variabledeclaration: type . identifier SEMICOLON
    19 functionheader: type . functiondeclarator
 
-    IDENTIFIER  shift, and go to state 3
+    IDENTIFIER  shift, and go to state 4
 
-    identifier          go to state 15
-    functiondeclarator  go to state 16
+    identifier          go to state 16
+    functiondeclarator  go to state 17
 
 
-State 6
+State 7
 
     2 start: globaldeclarations .
    10 globaldeclarations: globaldeclarations . globaldeclaration
 
     INT_DEC     shift, and go to state 1
     BOOL_DEC    shift, and go to state 2
-    IDENTIFIER  shift, and go to state 3
+    VOID        shift, and go to state 3
+    IDENTIFIER  shift, and go to state 4
 
     $default  reduce using rule 2 (start)
 
-    type                     go to state 5
-    globaldeclaration        go to state 17
-    variabledeclaration      go to state 8
-    identifier               go to state 9
-    mainfunctiondeclaration  go to state 10
-    mainfunctiondeclarator   go to state 11
-    functiondeclaration      go to state 12
-    functionheader           go to state 13
+    type                     go to state 6
+    globaldeclaration        go to state 18
+    variabledeclaration      go to state 9
+    identifier               go to state 10
+    mainfunctiondeclaration  go to state 11
+    mainfunctiondeclarator   go to state 12
+    functiondeclaration      go to state 13
+    functionheader           go to state 14
 
 
-State 7
+State 8
 
     9 globaldeclarations: globaldeclaration .
 
     $default  reduce using rule 9 (globaldeclarations)
 
 
-State 8
+State 9
 
    11 globaldeclaration: variabledeclaration .
 
     $default  reduce using rule 11 (globaldeclaration)
 
 
-State 9
+State 10
 
    17 mainfunctiondeclarator: identifier . OPEN_PAREN END_PAREN
 
-    OPEN_PAREN  shift, and go to state 18
+    OPEN_PAREN  shift, and go to state 19
 
 
-State 10
+State 11
 
    13 globaldeclaration: mainfunctiondeclaration .
 
     $default  reduce using rule 13 (globaldeclaration)
 
 
-State 11
+State 12
 
    16 mainfunctiondeclaration: mainfunctiondeclarator . block
 
-    OPEN_BRACE  shift, and go to state 19
+    OPEN_BRACE  shift, and go to state 20
 
-    block  go to state 20
+    block  go to state 21
 
 
-State 12
+State 13
 
    12 globaldeclaration: functiondeclaration .
 
     $default  reduce using rule 12 (globaldeclaration)
 
 
-State 13
+State 14
 
    18 functiondeclaration: functionheader . block
 
-    OPEN_BRACE  shift, and go to state 19
+    OPEN_BRACE  shift, and go to state 20
 
-    block  go to state 21
+    block  go to state 22
 
 
-State 14
+State 15
 
     0 $accept: start $end .
 
     $default  accept
 
 
-State 15
+State 16
 
    14 variabledeclaration: type identifier . SEMICOLON
    20 functiondeclarator: identifier . OPEN_PAREN formalparameterlist END_PAREN
    21                   | identifier . OPEN_PAREN END_PAREN
 
-    OPEN_PAREN  shift, and go to state 22
-    SEMICOLON   shift, and go to state 23
+    OPEN_PAREN  shift, and go to state 23
+    SEMICOLON   shift, and go to state 24
 
 
-State 16
+State 17
 
    19 functionheader: type functiondeclarator .
 
     $default  reduce using rule 19 (functionheader)
 
 
-State 17
+State 18
 
    10 globaldeclarations: globaldeclarations globaldeclaration .
 
     $default  reduce using rule 10 (globaldeclarations)
 
 
-State 18
+State 19
 
    17 mainfunctiondeclarator: identifier OPEN_PAREN . END_PAREN
 
-    END_PAREN  shift, and go to state 24
+    END_PAREN  shift, and go to state 25
 
 
-State 19
+State 20
 
    25 block: OPEN_BRACE . blockstatements END_BRACE
    26      | OPEN_BRACE . END_BRACE
 
     INT_DEC     shift, and go to state 1
     BOOL_DEC    shift, and go to state 2
-    OPEN_BRACE  shift, and go to state 19
-    END_BRACE   shift, and go to state 25
-    SEMICOLON   shift, and go to state 26
-    IDENTIFIER  shift, and go to state 3
-    IF          shift, and go to state 27
-    WHILE       shift, and go to state 28
-    BREAK       shift, and go to state 29
-    RETURN      shift, and go to state 30
+    VOID        shift, and go to state 3
+    OPEN_BRACE  shift, and go to state 20
+    END_BRACE   shift, and go to state 26
+    SEMICOLON   shift, and go to state 27
+    IDENTIFIER  shift, and go to state 4
+    IF          shift, and go to state 28
+    WHILE       shift, and go to state 29
+    BREAK       shift, and go to state 30
+    RETURN      shift, and go to state 31
 
-    type                 go to state 31
-    variabledeclaration  go to state 32
-    identifier           go to state 33
-    block                go to state 34
-    blockstatements      go to state 35
-    blockstatement       go to state 36
-    statement            go to state 37
-    statementexpression  go to state 38
-    functioninvocation   go to state 39
-    assignment           go to state 40
+    type                 go to state 32
+    variabledeclaration  go to state 33
+    identifier           go to state 34
+    block                go to state 35
+    blockstatements      go to state 36
+    blockstatement       go to state 37
+    statement            go to state 38
+    statementexpression  go to state 39
+    functioninvocation   go to state 40
+    assignment           go to state 41
 
 
-State 20
+State 21
 
    16 mainfunctiondeclaration: mainfunctiondeclarator block .
 
     $default  reduce using rule 16 (mainfunctiondeclaration)
 
 
-State 21
+State 22
 
    18 functiondeclaration: functionheader block .
 
     $default  reduce using rule 18 (functiondeclaration)
 
 
-State 22
+State 23
 
    20 functiondeclarator: identifier OPEN_PAREN . formalparameterlist END_PAREN
    21                   | identifier OPEN_PAREN . END_PAREN
 
     INT_DEC    shift, and go to state 1
     BOOL_DEC   shift, and go to state 2
-    END_PAREN  shift, and go to state 41
+    VOID       shift, and go to state 3
+    END_PAREN  shift, and go to state 42
 
-    type                 go to state 42
-    formalparameterlist  go to state 43
-    formalparameter      go to state 44
+    type                 go to state 43
+    formalparameterlist  go to state 44
+    formalparameter      go to state 45
 
 
-State 23
+State 24
 
    14 variabledeclaration: type identifier SEMICOLON .
 
     $default  reduce using rule 14 (variabledeclaration)
 
 
-State 24
+State 25
 
    17 mainfunctiondeclarator: identifier OPEN_PAREN END_PAREN .
 
     $default  reduce using rule 17 (mainfunctiondeclarator)
 
 
-State 25
+State 26
 
    26 block: OPEN_BRACE END_BRACE .
 
     $default  reduce using rule 26 (block)
 
 
-State 26
+State 27
 
    32 statement: SEMICOLON .
 
     $default  reduce using rule 32 (statement)
 
 
-State 27
+State 28
 
    37 statement: IF . OPEN_PAREN expression END_PAREN statement
    38          | IF . OPEN_PAREN expression END_PAREN statement ELSE statement
-
-    OPEN_PAREN  shift, and go to state 45
-
-
-State 28
-
-   39 statement: WHILE . OPEN_PAREN expression END_PAREN statement
 
     OPEN_PAREN  shift, and go to state 46
 
 
 State 29
 
-   34 statement: BREAK . SEMICOLON
+   39 statement: WHILE . OPEN_PAREN expression END_PAREN statement
 
-    SEMICOLON  shift, and go to state 47
+    OPEN_PAREN  shift, and go to state 47
 
 
 State 30
 
+   34 statement: BREAK . SEMICOLON
+
+    SEMICOLON  shift, and go to state 48
+
+
+State 31
+
    35 statement: RETURN . expression SEMICOLON
    36          | RETURN . SEMICOLON
 
-    NUMBER      shift, and go to state 48
-    STRING      shift, and go to state 49
-    BOOL        shift, and go to state 50
-    VOID        shift, and go to state 51
+    NUMBER      shift, and go to state 49
+    STRING      shift, and go to state 50
+    BOOL        shift, and go to state 51
     OPEN_PAREN  shift, and go to state 52
     SEMICOLON   shift, and go to state 53
     NEG         shift, and go to state 54
     NOT         shift, and go to state 55
-    IDENTIFIER  shift, and go to state 3
+    IDENTIFIER  shift, and go to state 4
 
     literal                   go to state 56
     identifier                go to state 57
@@ -570,23 +580,23 @@ State 30
     expression                go to state 70
 
 
-State 31
+State 32
 
    14 variabledeclaration: type . identifier SEMICOLON
 
-    IDENTIFIER  shift, and go to state 3
+    IDENTIFIER  shift, and go to state 4
 
     identifier  go to state 71
 
 
-State 32
+State 33
 
    29 blockstatement: variabledeclaration .
 
     $default  reduce using rule 29 (blockstatement)
 
 
-State 33
+State 34
 
    47 functioninvocation: identifier . OPEN_PAREN argumentlist END_PAREN
    48                   | identifier . OPEN_PAREN END_PAREN
@@ -596,92 +606,93 @@ State 33
     ASSIGNMENT  shift, and go to state 73
 
 
-State 34
+State 35
 
    31 statement: block .
 
     $default  reduce using rule 31 (statement)
 
 
-State 35
+State 36
 
    25 block: OPEN_BRACE blockstatements . END_BRACE
    28 blockstatements: blockstatements . blockstatement
 
     INT_DEC     shift, and go to state 1
     BOOL_DEC    shift, and go to state 2
-    OPEN_BRACE  shift, and go to state 19
+    VOID        shift, and go to state 3
+    OPEN_BRACE  shift, and go to state 20
     END_BRACE   shift, and go to state 74
-    SEMICOLON   shift, and go to state 26
-    IDENTIFIER  shift, and go to state 3
-    IF          shift, and go to state 27
-    WHILE       shift, and go to state 28
-    BREAK       shift, and go to state 29
-    RETURN      shift, and go to state 30
+    SEMICOLON   shift, and go to state 27
+    IDENTIFIER  shift, and go to state 4
+    IF          shift, and go to state 28
+    WHILE       shift, and go to state 29
+    BREAK       shift, and go to state 30
+    RETURN      shift, and go to state 31
 
-    type                 go to state 31
-    variabledeclaration  go to state 32
-    identifier           go to state 33
-    block                go to state 34
+    type                 go to state 32
+    variabledeclaration  go to state 33
+    identifier           go to state 34
+    block                go to state 35
     blockstatement       go to state 75
-    statement            go to state 37
-    statementexpression  go to state 38
-    functioninvocation   go to state 39
-    assignment           go to state 40
+    statement            go to state 38
+    statementexpression  go to state 39
+    functioninvocation   go to state 40
+    assignment           go to state 41
 
 
-State 36
+State 37
 
    27 blockstatements: blockstatement .
 
     $default  reduce using rule 27 (blockstatements)
 
 
-State 37
+State 38
 
    30 blockstatement: statement .
 
     $default  reduce using rule 30 (blockstatement)
 
 
-State 38
+State 39
 
    33 statement: statementexpression . SEMICOLON
 
     SEMICOLON  shift, and go to state 76
 
 
-State 39
+State 40
 
    41 statementexpression: functioninvocation .
 
     $default  reduce using rule 41 (statementexpression)
 
 
-State 40
+State 41
 
    40 statementexpression: assignment .
 
     $default  reduce using rule 40 (statementexpression)
 
 
-State 41
+State 42
 
    21 functiondeclarator: identifier OPEN_PAREN END_PAREN .
 
     $default  reduce using rule 21 (functiondeclarator)
 
 
-State 42
+State 43
 
    24 formalparameter: type . identifier
 
-    IDENTIFIER  shift, and go to state 3
+    IDENTIFIER  shift, and go to state 4
 
     identifier  go to state 77
 
 
-State 43
+State 44
 
    20 functiondeclarator: identifier OPEN_PAREN formalparameterlist . END_PAREN
    23 formalparameterlist: formalparameterlist . COMMA formalparameter
@@ -690,26 +701,25 @@ State 43
     COMMA      shift, and go to state 79
 
 
-State 44
+State 45
 
    22 formalparameterlist: formalparameter .
 
     $default  reduce using rule 22 (formalparameterlist)
 
 
-State 45
+State 46
 
    37 statement: IF OPEN_PAREN . expression END_PAREN statement
    38          | IF OPEN_PAREN . expression END_PAREN statement ELSE statement
 
-    NUMBER      shift, and go to state 48
-    STRING      shift, and go to state 49
-    BOOL        shift, and go to state 50
-    VOID        shift, and go to state 51
+    NUMBER      shift, and go to state 49
+    STRING      shift, and go to state 50
+    BOOL        shift, and go to state 51
     OPEN_PAREN  shift, and go to state 52
     NEG         shift, and go to state 54
     NOT         shift, and go to state 55
-    IDENTIFIER  shift, and go to state 3
+    IDENTIFIER  shift, and go to state 4
 
     literal                   go to state 56
     identifier                go to state 57
@@ -728,18 +738,17 @@ State 45
     expression                go to state 80
 
 
-State 46
+State 47
 
    39 statement: WHILE OPEN_PAREN . expression END_PAREN statement
 
-    NUMBER      shift, and go to state 48
-    STRING      shift, and go to state 49
-    BOOL        shift, and go to state 50
-    VOID        shift, and go to state 51
+    NUMBER      shift, and go to state 49
+    STRING      shift, and go to state 50
+    BOOL        shift, and go to state 51
     OPEN_PAREN  shift, and go to state 52
     NEG         shift, and go to state 54
     NOT         shift, and go to state 55
-    IDENTIFIER  shift, and go to state 3
+    IDENTIFIER  shift, and go to state 4
 
     literal                   go to state 56
     identifier                go to state 57
@@ -758,53 +767,45 @@ State 46
     expression                go to state 81
 
 
-State 47
+State 48
 
    34 statement: BREAK SEMICOLON .
 
     $default  reduce using rule 34 (statement)
 
 
-State 48
+State 49
 
     3 literal: NUMBER .
 
     $default  reduce using rule 3 (literal)
 
 
-State 49
+State 50
 
     4 literal: STRING .
 
     $default  reduce using rule 4 (literal)
 
 
-State 50
+State 51
 
     5 literal: BOOL .
 
     $default  reduce using rule 5 (literal)
 
 
-State 51
-
-    6 literal: VOID .
-
-    $default  reduce using rule 6 (literal)
-
-
 State 52
 
    43 primary: OPEN_PAREN . expression END_PAREN
 
-    NUMBER      shift, and go to state 48
-    STRING      shift, and go to state 49
-    BOOL        shift, and go to state 50
-    VOID        shift, and go to state 51
+    NUMBER      shift, and go to state 49
+    STRING      shift, and go to state 50
+    BOOL        shift, and go to state 51
     OPEN_PAREN  shift, and go to state 52
     NEG         shift, and go to state 54
     NOT         shift, and go to state 55
-    IDENTIFIER  shift, and go to state 3
+    IDENTIFIER  shift, and go to state 4
 
     literal                   go to state 56
     identifier                go to state 57
@@ -834,14 +835,13 @@ State 54
 
    51 unaryexpression: NEG . unaryexpression
 
-    NUMBER      shift, and go to state 48
-    STRING      shift, and go to state 49
-    BOOL        shift, and go to state 50
-    VOID        shift, and go to state 51
+    NUMBER      shift, and go to state 49
+    STRING      shift, and go to state 50
+    BOOL        shift, and go to state 51
     OPEN_PAREN  shift, and go to state 52
     NEG         shift, and go to state 54
     NOT         shift, and go to state 55
-    IDENTIFIER  shift, and go to state 3
+    IDENTIFIER  shift, and go to state 4
 
     literal             go to state 56
     identifier          go to state 83
@@ -855,14 +855,13 @@ State 55
 
    52 unaryexpression: NOT . unaryexpression
 
-    NUMBER      shift, and go to state 48
-    STRING      shift, and go to state 49
-    BOOL        shift, and go to state 50
-    VOID        shift, and go to state 51
+    NUMBER      shift, and go to state 49
+    STRING      shift, and go to state 50
+    BOOL        shift, and go to state 51
     OPEN_PAREN  shift, and go to state 52
     NEG         shift, and go to state 54
     NOT         shift, and go to state 55
-    IDENTIFIER  shift, and go to state 3
+    IDENTIFIER  shift, and go to state 4
 
     literal             go to state 56
     identifier          go to state 83
@@ -1019,7 +1018,7 @@ State 71
 
    14 variabledeclaration: type identifier . SEMICOLON
 
-    SEMICOLON  shift, and go to state 23
+    SEMICOLON  shift, and go to state 24
 
 
 State 72
@@ -1027,15 +1026,14 @@ State 72
    47 functioninvocation: identifier OPEN_PAREN . argumentlist END_PAREN
    48                   | identifier OPEN_PAREN . END_PAREN
 
-    NUMBER      shift, and go to state 48
-    STRING      shift, and go to state 49
-    BOOL        shift, and go to state 50
-    VOID        shift, and go to state 51
+    NUMBER      shift, and go to state 49
+    STRING      shift, and go to state 50
+    BOOL        shift, and go to state 51
     OPEN_PAREN  shift, and go to state 52
     END_PAREN   shift, and go to state 100
     NEG         shift, and go to state 54
     NOT         shift, and go to state 55
-    IDENTIFIER  shift, and go to state 3
+    IDENTIFIER  shift, and go to state 4
 
     literal                   go to state 56
     identifier                go to state 57
@@ -1059,14 +1057,13 @@ State 73
 
    75 assignment: identifier ASSIGNMENT . assignmentexpression
 
-    NUMBER      shift, and go to state 48
-    STRING      shift, and go to state 49
-    BOOL        shift, and go to state 50
-    VOID        shift, and go to state 51
+    NUMBER      shift, and go to state 49
+    STRING      shift, and go to state 50
+    BOOL        shift, and go to state 51
     OPEN_PAREN  shift, and go to state 52
     NEG         shift, and go to state 54
     NOT         shift, and go to state 55
-    IDENTIFIER  shift, and go to state 3
+    IDENTIFIER  shift, and go to state 4
 
     literal                   go to state 56
     identifier                go to state 57
@@ -1125,8 +1122,9 @@ State 79
 
     INT_DEC   shift, and go to state 1
     BOOL_DEC  shift, and go to state 2
+    VOID      shift, and go to state 3
 
-    type             go to state 42
+    type             go to state 43
     formalparameter  go to state 104
 
 
@@ -1181,14 +1179,13 @@ State 86
 
    55 multiplicativeexpression: multiplicativeexpression MULT . unaryexpression
 
-    NUMBER      shift, and go to state 48
-    STRING      shift, and go to state 49
-    BOOL        shift, and go to state 50
-    VOID        shift, and go to state 51
+    NUMBER      shift, and go to state 49
+    STRING      shift, and go to state 50
+    BOOL        shift, and go to state 51
     OPEN_PAREN  shift, and go to state 52
     NEG         shift, and go to state 54
     NOT         shift, and go to state 55
-    IDENTIFIER  shift, and go to state 3
+    IDENTIFIER  shift, and go to state 4
 
     literal             go to state 56
     identifier          go to state 83
@@ -1202,14 +1199,13 @@ State 87
 
    56 multiplicativeexpression: multiplicativeexpression DIV . unaryexpression
 
-    NUMBER      shift, and go to state 48
-    STRING      shift, and go to state 49
-    BOOL        shift, and go to state 50
-    VOID        shift, and go to state 51
+    NUMBER      shift, and go to state 49
+    STRING      shift, and go to state 50
+    BOOL        shift, and go to state 51
     OPEN_PAREN  shift, and go to state 52
     NEG         shift, and go to state 54
     NOT         shift, and go to state 55
-    IDENTIFIER  shift, and go to state 3
+    IDENTIFIER  shift, and go to state 4
 
     literal             go to state 56
     identifier          go to state 83
@@ -1223,14 +1219,13 @@ State 88
 
    57 multiplicativeexpression: multiplicativeexpression MOD . unaryexpression
 
-    NUMBER      shift, and go to state 48
-    STRING      shift, and go to state 49
-    BOOL        shift, and go to state 50
-    VOID        shift, and go to state 51
+    NUMBER      shift, and go to state 49
+    STRING      shift, and go to state 50
+    BOOL        shift, and go to state 51
     OPEN_PAREN  shift, and go to state 52
     NEG         shift, and go to state 54
     NOT         shift, and go to state 55
-    IDENTIFIER  shift, and go to state 3
+    IDENTIFIER  shift, and go to state 4
 
     literal             go to state 56
     identifier          go to state 83
@@ -1244,14 +1239,13 @@ State 89
 
    59 additiveexpression: additiveexpression ADD . multiplicativeexpression
 
-    NUMBER      shift, and go to state 48
-    STRING      shift, and go to state 49
-    BOOL        shift, and go to state 50
-    VOID        shift, and go to state 51
+    NUMBER      shift, and go to state 49
+    STRING      shift, and go to state 50
+    BOOL        shift, and go to state 51
     OPEN_PAREN  shift, and go to state 52
     NEG         shift, and go to state 54
     NOT         shift, and go to state 55
-    IDENTIFIER  shift, and go to state 3
+    IDENTIFIER  shift, and go to state 4
 
     literal                   go to state 56
     identifier                go to state 83
@@ -1266,14 +1260,13 @@ State 90
 
    60 additiveexpression: additiveexpression SUB . multiplicativeexpression
 
-    NUMBER      shift, and go to state 48
-    STRING      shift, and go to state 49
-    BOOL        shift, and go to state 50
-    VOID        shift, and go to state 51
+    NUMBER      shift, and go to state 49
+    STRING      shift, and go to state 50
+    BOOL        shift, and go to state 51
     OPEN_PAREN  shift, and go to state 52
     NEG         shift, and go to state 54
     NOT         shift, and go to state 55
-    IDENTIFIER  shift, and go to state 3
+    IDENTIFIER  shift, and go to state 4
 
     literal                   go to state 56
     identifier                go to state 83
@@ -1288,14 +1281,13 @@ State 91
 
    63 relationalexpression: relationalexpression GT . additiveexpression
 
-    NUMBER      shift, and go to state 48
-    STRING      shift, and go to state 49
-    BOOL        shift, and go to state 50
-    VOID        shift, and go to state 51
+    NUMBER      shift, and go to state 49
+    STRING      shift, and go to state 50
+    BOOL        shift, and go to state 51
     OPEN_PAREN  shift, and go to state 52
     NEG         shift, and go to state 54
     NOT         shift, and go to state 55
-    IDENTIFIER  shift, and go to state 3
+    IDENTIFIER  shift, and go to state 4
 
     literal                   go to state 56
     identifier                go to state 83
@@ -1311,14 +1303,13 @@ State 92
 
    62 relationalexpression: relationalexpression LT . additiveexpression
 
-    NUMBER      shift, and go to state 48
-    STRING      shift, and go to state 49
-    BOOL        shift, and go to state 50
-    VOID        shift, and go to state 51
+    NUMBER      shift, and go to state 49
+    STRING      shift, and go to state 50
+    BOOL        shift, and go to state 51
     OPEN_PAREN  shift, and go to state 52
     NEG         shift, and go to state 54
     NOT         shift, and go to state 55
-    IDENTIFIER  shift, and go to state 3
+    IDENTIFIER  shift, and go to state 4
 
     literal                   go to state 56
     identifier                go to state 83
@@ -1334,14 +1325,13 @@ State 93
 
    65 relationalexpression: relationalexpression GTE . additiveexpression
 
-    NUMBER      shift, and go to state 48
-    STRING      shift, and go to state 49
-    BOOL        shift, and go to state 50
-    VOID        shift, and go to state 51
+    NUMBER      shift, and go to state 49
+    STRING      shift, and go to state 50
+    BOOL        shift, and go to state 51
     OPEN_PAREN  shift, and go to state 52
     NEG         shift, and go to state 54
     NOT         shift, and go to state 55
-    IDENTIFIER  shift, and go to state 3
+    IDENTIFIER  shift, and go to state 4
 
     literal                   go to state 56
     identifier                go to state 83
@@ -1357,14 +1347,13 @@ State 94
 
    64 relationalexpression: relationalexpression LTE . additiveexpression
 
-    NUMBER      shift, and go to state 48
-    STRING      shift, and go to state 49
-    BOOL        shift, and go to state 50
-    VOID        shift, and go to state 51
+    NUMBER      shift, and go to state 49
+    STRING      shift, and go to state 50
+    BOOL        shift, and go to state 51
     OPEN_PAREN  shift, and go to state 52
     NEG         shift, and go to state 54
     NOT         shift, and go to state 55
-    IDENTIFIER  shift, and go to state 3
+    IDENTIFIER  shift, and go to state 4
 
     literal                   go to state 56
     identifier                go to state 83
@@ -1380,14 +1369,13 @@ State 95
 
    67 equalityexpression: equalityexpression EQ . relationalexpression
 
-    NUMBER      shift, and go to state 48
-    STRING      shift, and go to state 49
-    BOOL        shift, and go to state 50
-    VOID        shift, and go to state 51
+    NUMBER      shift, and go to state 49
+    STRING      shift, and go to state 50
+    BOOL        shift, and go to state 51
     OPEN_PAREN  shift, and go to state 52
     NEG         shift, and go to state 54
     NOT         shift, and go to state 55
-    IDENTIFIER  shift, and go to state 3
+    IDENTIFIER  shift, and go to state 4
 
     literal                   go to state 56
     identifier                go to state 83
@@ -1404,14 +1392,13 @@ State 96
 
    68 equalityexpression: equalityexpression NEQ . relationalexpression
 
-    NUMBER      shift, and go to state 48
-    STRING      shift, and go to state 49
-    BOOL        shift, and go to state 50
-    VOID        shift, and go to state 51
+    NUMBER      shift, and go to state 49
+    STRING      shift, and go to state 50
+    BOOL        shift, and go to state 51
     OPEN_PAREN  shift, and go to state 52
     NEG         shift, and go to state 54
     NOT         shift, and go to state 55
-    IDENTIFIER  shift, and go to state 3
+    IDENTIFIER  shift, and go to state 4
 
     literal                   go to state 56
     identifier                go to state 83
@@ -1428,14 +1415,13 @@ State 97
 
    70 conditionalandexpression: conditionalandexpression AND . equalityexpression
 
-    NUMBER      shift, and go to state 48
-    STRING      shift, and go to state 49
-    BOOL        shift, and go to state 50
-    VOID        shift, and go to state 51
+    NUMBER      shift, and go to state 49
+    STRING      shift, and go to state 50
+    BOOL        shift, and go to state 51
     OPEN_PAREN  shift, and go to state 52
     NEG         shift, and go to state 54
     NOT         shift, and go to state 55
-    IDENTIFIER  shift, and go to state 3
+    IDENTIFIER  shift, and go to state 4
 
     literal                   go to state 56
     identifier                go to state 83
@@ -1453,14 +1439,13 @@ State 98
 
    72 conditionalorexpression: conditionalorexpression OR . conditionalandexpression
 
-    NUMBER      shift, and go to state 48
-    STRING      shift, and go to state 49
-    BOOL        shift, and go to state 50
-    VOID        shift, and go to state 51
+    NUMBER      shift, and go to state 49
+    STRING      shift, and go to state 50
+    BOOL        shift, and go to state 51
     OPEN_PAREN  shift, and go to state 52
     NEG         shift, and go to state 54
     NOT         shift, and go to state 55
-    IDENTIFIER  shift, and go to state 3
+    IDENTIFIER  shift, and go to state 4
 
     literal                   go to state 56
     identifier                go to state 83
@@ -1524,40 +1509,40 @@ State 105
    37 statement: IF OPEN_PAREN expression END_PAREN . statement
    38          | IF OPEN_PAREN expression END_PAREN . statement ELSE statement
 
-    OPEN_BRACE  shift, and go to state 19
-    SEMICOLON   shift, and go to state 26
-    IDENTIFIER  shift, and go to state 3
-    IF          shift, and go to state 27
-    WHILE       shift, and go to state 28
-    BREAK       shift, and go to state 29
-    RETURN      shift, and go to state 30
+    OPEN_BRACE  shift, and go to state 20
+    SEMICOLON   shift, and go to state 27
+    IDENTIFIER  shift, and go to state 4
+    IF          shift, and go to state 28
+    WHILE       shift, and go to state 29
+    BREAK       shift, and go to state 30
+    RETURN      shift, and go to state 31
 
-    identifier           go to state 33
-    block                go to state 34
+    identifier           go to state 34
+    block                go to state 35
     statement            go to state 123
-    statementexpression  go to state 38
-    functioninvocation   go to state 39
-    assignment           go to state 40
+    statementexpression  go to state 39
+    functioninvocation   go to state 40
+    assignment           go to state 41
 
 
 State 106
 
    39 statement: WHILE OPEN_PAREN expression END_PAREN . statement
 
-    OPEN_BRACE  shift, and go to state 19
-    SEMICOLON   shift, and go to state 26
-    IDENTIFIER  shift, and go to state 3
-    IF          shift, and go to state 27
-    WHILE       shift, and go to state 28
-    BREAK       shift, and go to state 29
-    RETURN      shift, and go to state 30
+    OPEN_BRACE  shift, and go to state 20
+    SEMICOLON   shift, and go to state 27
+    IDENTIFIER  shift, and go to state 4
+    IF          shift, and go to state 28
+    WHILE       shift, and go to state 29
+    BREAK       shift, and go to state 30
+    RETURN      shift, and go to state 31
 
-    identifier           go to state 33
-    block                go to state 34
+    identifier           go to state 34
+    block                go to state 35
     statement            go to state 124
-    statementexpression  go to state 38
-    functioninvocation   go to state 39
-    assignment           go to state 40
+    statementexpression  go to state 39
+    functioninvocation   go to state 40
+    assignment           go to state 41
 
 
 State 107
@@ -1729,14 +1714,13 @@ State 122
 
    46 argumentlist: argumentlist COMMA . expression
 
-    NUMBER      shift, and go to state 48
-    STRING      shift, and go to state 49
-    BOOL        shift, and go to state 50
-    VOID        shift, and go to state 51
+    NUMBER      shift, and go to state 49
+    STRING      shift, and go to state 50
+    BOOL        shift, and go to state 51
     OPEN_PAREN  shift, and go to state 52
     NEG         shift, and go to state 54
     NOT         shift, and go to state 55
-    IDENTIFIER  shift, and go to state 3
+    IDENTIFIER  shift, and go to state 4
 
     literal                   go to state 56
     identifier                go to state 57
@@ -1784,20 +1768,20 @@ State 126
 
    38 statement: IF OPEN_PAREN expression END_PAREN statement ELSE . statement
 
-    OPEN_BRACE  shift, and go to state 19
-    SEMICOLON   shift, and go to state 26
-    IDENTIFIER  shift, and go to state 3
-    IF          shift, and go to state 27
-    WHILE       shift, and go to state 28
-    BREAK       shift, and go to state 29
-    RETURN      shift, and go to state 30
+    OPEN_BRACE  shift, and go to state 20
+    SEMICOLON   shift, and go to state 27
+    IDENTIFIER  shift, and go to state 4
+    IF          shift, and go to state 28
+    WHILE       shift, and go to state 29
+    BREAK       shift, and go to state 30
+    RETURN      shift, and go to state 31
 
-    identifier           go to state 33
-    block                go to state 34
+    identifier           go to state 34
+    block                go to state 35
     statement            go to state 127
-    statementexpression  go to state 38
-    functioninvocation   go to state 39
-    assignment           go to state 40
+    statementexpression  go to state 39
+    functioninvocation   go to state 40
+    assignment           go to state 41
 
 
 State 127

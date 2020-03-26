@@ -144,12 +144,12 @@ literal:
    NUMBER {$$ = make_new_node(NUMBER, $1, 0);};
  | STRING {$$ = make_new_node(STRING, $1, 0);};
  | BOOL   {$$ = make_new_node(BOOL, $1, 0);};
- | VOID   {$$ = make_new_node(VOID, $1, 0);};
  ;
 
 type:
    BOOL_DEC {$$ = make_new_node(BOOL_DEC, $1, 0);};
  | INT_DEC {$$ = make_new_node(INT_DEC, $1, 0);};
+ | VOID   {$$ = make_new_node(VOID, $1, 0);};
  ;
 
 globaldeclarations:
@@ -228,7 +228,7 @@ statement:
  | SEMICOLON                                                        {$$ = make_new_node(NO_TYPE, no_data, 0);};
  | statementexpression SEMICOLON                                    {$$ = $1;};
  | BREAK SEMICOLON                                                  {$$ = make_new_node(BREAK, $1, 0);};
- | RETURN expression SEMICOLON                                      {$$ = make_new_node(BREAK, $1, 1, $2);};
+ | RETURN expression SEMICOLON                                      {$$ = make_new_node(RETURN, $1, 1, $2);};
  | RETURN SEMICOLON                                                 {$$ = make_new_node(RETURN, $1, 0);};
  | IF OPEN_PAREN expression END_PAREN statement                     {$$ = make_new_node(IF, no_data, 2, $3, $5);};
  | IF OPEN_PAREN expression END_PAREN statement ELSE statement      {$$ = make_new_node(ELSE, no_data, 3, $3, $5, $7);};

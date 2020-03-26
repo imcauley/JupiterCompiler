@@ -7,7 +7,7 @@ SCANNER_DIR	= ./scanner/
 DATA_DIR = ./data/
 
 CC	= g++
-CFLAGS	= -g -Wall -ansi -pedantic -I$(HEAD_DIR) -Wno-write-strings
+CFLAGS	= -DDEBUG -g -Wall -ansi -pedantic -I$(HEAD_DIR) -Wno-write-strings
 
 LOGIC = $(BIN_DIR)main.o $(BIN_DIR)bison.o $(BIN_DIR)lex.o $(BIN_DIR)semantics.o
 DATA = $(BIN_DIR)tokens.o $(BIN_DIR)ast.o $(BIN_DIR)token_map.o $(BIN_DIR)symbol_table.o

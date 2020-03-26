@@ -14,7 +14,7 @@ do
     if [ $PF = $PASS ]
     then
         ./compiler $f > /dev/null
-        if [ $? -eq 255 ]
+        if [ $? -eq 0 ]
         then
             echo -e "${GREEN}PASS PASS${NC}"
         else

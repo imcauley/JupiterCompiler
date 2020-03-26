@@ -44,6 +44,18 @@ void add_child(AST* node, AST* child) {
     node->children.push_back(child);
 }
 
+AST *get_child_of_type(AST* tree, int type) {
+    if(tree->type == type) {
+        return tree;
+    }
+    for(std::vector<AST*>::size_type i = 0; i < tree->children.size(); i++) {
+        if(get_child_of_type(tree->children[i], type) != NULL) {
+            return tree->children[i];
+        }
+    }
+    return NULL;
+}
+
 std::string ast_to_string(AST* tree, int depth) {
     std::string output;
     std::string indent = "\n";
