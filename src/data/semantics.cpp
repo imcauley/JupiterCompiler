@@ -55,7 +55,7 @@ void type_check(AST* tree, sym_table* table) {
 
                 symbol *new_symbol = new symbol();
                 new_symbol->type = VOID;
-                new_symbol->id = tree->children[0]->data;
+                new_symbol->id = tree->children[i]->children[0]->data;
                 new_symbol->exp_type = FUNC_MAIN;
 
                 add_symbol(table, new_symbol);
@@ -86,7 +86,7 @@ void type_check(AST* tree, sym_table* table) {
 
         add_symbol(table, new_symbol);
     }
-    else if(tree->type == FUNC_HEAD) {
+    else if(tree->type == FUNC_DEC) {
         open_scope(table);
         for(long unsigned int i = 0; i < tree->children.size(); i++) {
             type_check(tree->children[i], table);
@@ -128,12 +128,12 @@ void type_check(AST* tree, sym_table* table) {
     //         }
     //     }
     // }
-    // else if(tree->type == IDENTIFIER) {
-    //     if(get_symbol(table, tree->data) == NULL) {
-    //         fprintf(stderr, "No declaration of %s\n", tree->data.c_str());
-    //         exit(-1);        
-    //     }
-    // }
+    else if(tree->type == IDENTIFIER) {
+        if(get_symbol(table, tree->data) == NULL) {
+            fprintf(stderr, "No declaration of %s\n", tree->data.c_str());
+            exit(-1);        
+        }
+    }
     else {
         for(long unsigned int i = 0; i < tree->children.size(); i++) {
             type_check(tree->children[i], table);
@@ -169,6 +169,8 @@ void add_func_to_table(sym_table *table, AST *header) {
         fprintf(stderr, "Redeclaration of function %s\n", new_symbol->id.c_str());
         exit(-1);
     }
+
+    add_symbol(table, new_symbol);
 }
 
 bool main_func_exists(sym_table *table) {
