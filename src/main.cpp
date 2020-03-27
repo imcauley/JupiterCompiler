@@ -24,15 +24,8 @@ int main(int argc, char **argv)
   sym_table *table = new sym_table;
   open_scope(table);
 
-
-  symbol* test = get_symbol(table, "k");
-
-  // std::cout << (table->scope_stack).size() << "\n";
   yyparse();
   type_check(final_tree, table);
 
-  // std::cout << "here\n";
-  // exit(0);
-  std::cout << ast_to_string(final_tree, 0) << "\n";
   return 0;
 }

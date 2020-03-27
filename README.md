@@ -8,7 +8,8 @@ A J-- Compiler
 The program 'compiler' will be put in the main directory
 
 ## Running
-
 ./compiler filename
 
-The compiler will output an AST
+## Current Limitations
+- Cannot send error when there is a while out of a while loop
+- Errors do not have line numbers

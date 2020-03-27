@@ -12,7 +12,7 @@
             "request": "launch",
             "program": "/home/ugd/isaac.mcauley/411/project/compiler",
             "args": [
-                "/home/ugd/isaac.mcauley/411/project/testfiles/fail_undefined_id.j"
+                "/home/ugd/isaac.mcauley/411/project/testfiles/pass_void_func.j"
             ],
             "stopAtEntry": false,
             "cwd": "/home/ugd/isaac.mcauley/411/project/",

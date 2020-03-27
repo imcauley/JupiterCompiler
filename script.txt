@@ -1,0 +1,118 @@
+~/411/project$ ls
+autotest.sh  compiler  README.md  testfiles
+bin          headers   src
+~/411/project$ rm ./compiler 
+~/411/project$ rm bin/*.o
+~/411/project$ ls
+autotest.sh  bin  headers  README.md  src  testfiles
+~/411/project$ cd src/
+~/411/project/src$ make
+g++ -DDEBUG -g -Wall -ansi -pedantic -I../headers/ -Wno-write-strings -c main.cpp -o ../bin/main.o
+bison --debug -d -v -b ./parser/parse ./parser/parse.y 
+./parser/parse.y:137.6: warning: empty rule for typed nonterminal, and no action [-Wother]
+ start:
+      ^
+g++ -DYYDEBUG -DYYTRACE -DDEBUG -g -Wall -ansi -pedantic -I../headers/ -Wno-write-strings -c ./parser/bison.c -o ../bin/bison.o
+flex ./scanner/scan.l
+g++ -DDEBUG -g -Wall -ansi -pedantic -I../headers/ -Wno-write-strings -c ./scanner/lex.yy.c -o ../bin/lex.o
+lex.yy.c:1369:17: warning: ‘void yyunput(int, char*)’ defined but not used [-Wunused-function]
+python3 ./parser/convert_tokens.py
+g++ -DDEBUG -g -Wall -ansi -pedantic -I../headers/ -Wno-write-strings -c ./parser/token_map.c -o ../bin/token_map.o
+g++ -DDEBUG -g -Wall -ansi -pedantic -I../headers/ -Wno-write-strings -c ./data/ast.cpp -o ../bin/ast.o
+g++ -DDEBUG -g -Wall -ansi -pedantic -I../headers/ -Wno-write-strings -c ./data/symbol_table.cpp -o ../bin/symbol_table.o
+g++ -DDEBUG -g -Wall -ansi -pedantic -I../headers/ -Wno-write-strings -c ./data/semantics.cpp -o ../bin/semantics.o
+g++ -DDEBUG -g -Wall -ansi -pedantic -I../headers/ -Wno-write-strings -c tokens.c -o ../bin/tokens.o
+g++ -DYYDEBUG -DDEBUG -g -Wall -ansi -pedantic -I../headers/ -Wno-write-strings ../bin/main.o ../bin/bison.o ../bin/lex.o ../bin/semantics.o ../bin/tokens.o ../bin/ast.o ../bin/token_map.o ../bin/symbol_table.o -o ../compiler -lfl
+~/411/project/src$ cd ..
+~/411/project$ ls -al testfiles/
+total 104
+drwx------ 2 isaac.mcauley ug 4096 Mar 27 13:20 .
+drwx------ 8 isaac.mcauley ug 4096 Mar 27 13:24 ..
+-rw------- 1 isaac.mcauley ug   36 Mar 24 12:48 fail_assign_type.j
+-rw-r--r-- 1 isaac.mcauley ug   21 Mar 25 12:02 fail_break_out_of_while.j
+-rw-r--r-- 1 isaac.mcauley ug   70 Mar 25 12:01 fail_calls_main.j
+-rw-r--r-- 1 isaac.mcauley ug   61 Mar 25 11:58 fail_func_args.j
+-rw------- 1 isaac.mcauley ug   81 Mar 26 15:02 fail_func_redec.j
+-rw-r--r-- 1 isaac.mcauley ug   80 Mar 25 12:07 fail_if_int.j
+-rw-r--r-- 1 isaac.mcauley ug   46 Mar 25 11:57 fail_inner_dec.j
+-rw------- 1 isaac.mcauley ug  106 Mar 26 19:48 fail_invalid_exp.j
+-rw-r--r-- 1 isaac.mcauley ug   26 Mar 25 12:00 fail_main_with_args.j
+-rw-r--r-- 1 isaac.mcauley ug   54 Mar 25 11:56 fail_no_main.j
+-rw-r--r-- 1 isaac.mcauley ug   55 Mar 25 12:03 fail_no_return.j
+-rw------- 1 isaac.mcauley ug   32 Mar 24 12:01 fail_redec_var.j
+-rw-r--r-- 1 isaac.mcauley ug   61 Mar 25 12:05 fail_return_type.j
+-rw-r--r-- 1 isaac.mcauley ug   53 Mar 25 11:53 fail_two_mains.j
+-rw-r--r-- 1 isaac.mcauley ug   58 Mar 25 12:07 fail_undefined_id.j
+-rw-r--r-- 1 isaac.mcauley ug   59 Mar 25 12:04 fail_void_return.j
+-rw-r--r-- 1 isaac.mcauley ug   49 Mar 25 12:03 pass_break.j
+-rw------- 1 isaac.mcauley ug   77 Mar 27 13:21 pass_factorial.j
+-rw-r--r-- 1 isaac.mcauley ug   58 Mar 25 12:01 pass_func_call.j
+-rw------- 1 isaac.mcauley ug   64 Mar 26 20:51 pass_infinite_loop.j
+-rw------- 1 isaac.mcauley ug   69 Mar 26 16:29 pass_multi_vars.j
+-rw------- 1 isaac.mcauley ug   76 Mar 26 20:37 pass_proper_if.j
+-rw------- 1 isaac.mcauley ug   97 Mar 26 20:59 pass_valid_expressions.j
+-rw-r--r-- 1 isaac.mcauley ug   56 Mar 25 12:04 pass_void_func.j
+~/411/project$ ./autotest.sh 
+fail_assign_type.j
+Type mismatch
+FAIL PASS
+fail_break_out_of_while.j
+FAIL FAIL
+fail_calls_main.j
+Cannot call main function
+FAIL PASS
+fail_func_args.j
+Wrong number of arguments
+FAIL PASS
+fail_func_redec.j
+Redeclaration of function func
+FAIL PASS
+fail_if_int.j
+Non-boolean type in if conditional
+FAIL PASS
+fail_inner_dec.j
+Varaible declaration in internal block
+FAIL PASS
+fail_invalid_exp.j
+Type mismatch
+FAIL PASS
+fail_main_with_args.j
+line no: 1   syntax error, unexpected INT_DEC, expecting END_PAREN
+FAIL PASS
+fail_no_main.j
+No main function declared
+FAIL PASS
+fail_no_return.j
+No return on non void function
+FAIL PASS
+fail_redec_var.j
+Redeclaration of i
+FAIL PASS
+fail_return_type.j
+Type mismatch on return statement
+FAIL PASS
+fail_two_mains.j
+Two main functions
+FAIL PASS
+fail_undefined_id.j
+No declaration of k
+FAIL PASS
+fail_void_return.j
+None void return in void function
+FAIL PASS
+pass_break.j
+PASS PASS
+pass_factorial.j
+PASS PASS
+pass_func_call.j
+PASS PASS
+pass_infinite_loop.j
+PASS PASS
+pass_multi_vars.j
+PASS PASS
+pass_proper_if.j
+PASS PASS
+pass_valid_expressions.j
+PASS PASS
+pass_void_func.j
+PASS PASS

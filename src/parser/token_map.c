@@ -48,6 +48,7 @@ case 302: return "PARAM_LIST";
 case 303: return "FORM_PARAM";
 case 304: return "BLOCK";
 case 305: return "ROOT";
+case 306: return "EXPRESSION";
 default: return "ERROR";
 } 
 }

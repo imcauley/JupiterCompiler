@@ -2,8 +2,6 @@
 #include "heading.h"
 
 void type_check(AST* tree, sym_table* table) {
-    table_to_string(table);
-    std::cout << "\n\n";
     if(tree->type == GLOBAL_DEC) {
         bool is_main = false;
         for(long unsigned int i = 0; i < tree->children.size(); i++) {
@@ -25,6 +23,20 @@ void type_check(AST* tree, sym_table* table) {
                 add_symbol(table, new_symbol);
                 is_main = true;
             }
+            else if(tree->children[i]->type == VAR_DEC) {
+                symbol *new_symbol = new symbol();
+                new_symbol->type = tree->children[i]->children[0]->type;
+                new_symbol->id = tree->children[i]->children[1]->data;
+                new_symbol->exp_type = VAR;
+
+                if(get_symbol_in_scope(table, new_symbol->id) != NULL) {
+                    fprintf(stderr, "Redeclaration of %s\n", new_symbol->id.c_str());
+                    exit(-1);
+                }
+
+                add_symbol(table, new_symbol);
+            }
+
         }
         
         if(!is_main) {
@@ -99,6 +111,23 @@ void type_check(AST* tree, sym_table* table) {
             fprintf(stderr, "Cannot call main function\n");
             exit(-1);        
         }
+
+        std::vector<int> arguments;
+        if(tree->children.size() > 1) {
+            arguments = formal_list_to_type(table, tree->children[1]);
+        }
+
+        if(arguments.size() != function_symbol->arguments.size()) {
+            fprintf(stderr, "Wrong number of arguments\n");
+            exit(-1);    
+        }
+
+        for(long unsigned int i = 0; i < arguments.size(); i++) {
+            if(arguments[i] != function_symbol->arguments[i]) {
+                fprintf(stderr, "Wrong argument type\n");
+                exit(-1);    
+            }
+        }
     }
     else if(tree->type == IF || tree->type == ELSE || tree->type == WHILE) {
         //type checking conditional
@@ -169,11 +198,30 @@ void add_func_to_table(sym_table *table, AST *header) {
         exit(-1);
     }
 
+    if(header->children[1]->children.size() > 1) {
+        new_symbol->arguments = formal_list_to_type(table, header->children[1]->children[1]);
+    }
+    else {
+        std::vector<int> types;
+        new_symbol->arguments = types;
+    }
+
     add_symbol(table, new_symbol);
+}
+
+std::vector<int> formal_list_to_type(sym_table *table, AST* list) {
+    std::vector<int> types;
+    for(long unsigned int i = 0; i < list->children.size(); i++) {
+        types.push_back(get_expression_type(table, list->children[i]));
+    }
+    return types;
 }
 
 int get_expression_type(sym_table *table, AST* tree) {
     if(tree->type == EXPRESSION) {
+        return(get_expression_type(table, tree->children[0]));
+    }
+    else if(tree->type == VAR_DEC || tree->type == FORM_PARAM) {
         return(get_expression_type(table, tree->children[0]));
     }
     else if(tree->type == BOOL_DEC ||
@@ -198,6 +246,24 @@ int get_expression_type(sym_table *table, AST* tree) {
             fprintf(stderr, "Cannot call main function\n");
             exit(-1);        
         }
+
+        std::vector<int> arguments;
+        if(tree->children.size() > 1) {
+            arguments = formal_list_to_type(table, tree->children[1]);
+        }
+
+        if(arguments.size() != function_symbol->arguments.size()) {
+            fprintf(stderr, "Wrong number of arguments\n");
+            exit(-1);    
+        }
+
+        for(long unsigned int i = 0; i < arguments.size(); i++) {
+            if(arguments[i] != function_symbol->arguments[i]) {
+                fprintf(stderr, "Wrong argument type\n");
+                exit(-1);    
+            }
+        }
+
         return function_symbol->type;
     }
     else if(tree->type == LT || 
