@@ -1,35 +1,6 @@
 #include "semantics.h"
 #include "heading.h"
 
-bool check_for_main(AST* tree) {
-    int main_index = 0;
-    for(unsigned int i = 0; i < tree->children.size(); i++) {
-        if(tree->children[i]->type == MAIN_FUNC) {
-            main_index = i;
-            break;
-        }
-    }
-    bool has_return;
-    if(main_index > 0) {
-        has_return = contains_type(tree->children[main_index], RETURN);
-    }
-
-    return (!has_return);
-}
-
-bool contains_type(AST* tree, int node_type) {
-    for(unsigned int i = 0; i < tree->children.size(); i++) {
-        AST* subtree = tree->children[i];
-        if(subtree->type == node_type) {
-            return true;
-        }
-        if(subtree->children.size() > 0) {
-            return contains_type(subtree, node_type);
-        }
-    }
-    return false;
-}
-
 // sym_table *make_sym_table(AST* tree) {
 //     sym_table *table = new sym_table();
 //     open_scope(table);
@@ -136,7 +107,7 @@ void type_check(AST* tree, sym_table* table) {
             exit(-1);        
         }
     }
-    else if(tree->type == IF || tree->type == ELSE || tree->type == WHILE)
+    else if(tree->type == IF || tree->type == ELSE || tree->type == WHILE) {
         //type checking conditional
         int if_exp = get_expression_type(table, tree->children[0]);
         if(if_exp != BOOL_DEC) {
@@ -186,18 +157,6 @@ void add_arguments_to_scope(sym_table *table, AST* tree) {
             add_symbol(table, new_symbol);
         }
     }
-}
-
-int get_function_type(sym_table *table) {
-    int i = table->scope_stack.size() - 1;
-    std::map<std::string, symbol*>::iterator it;
-    for ( it = table->scope_stack[i]->begin(); it != table->scope_stack[i]->end(); it++ ){
-        if(it->second->exp_type == FUNC) {
-            return it->second->type;
-        }
-    }
-
-    return -1;
 }
 
 void add_func_to_table(sym_table *table, AST *header) {
