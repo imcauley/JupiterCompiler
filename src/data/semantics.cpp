@@ -1,13 +1,6 @@
 #include "semantics.h"
 #include "heading.h"
 
-// sym_table *make_sym_table(AST* tree) {
-//     sym_table *table = new sym_table();
-//     open_scope(table);
-//     make_sym_table(tree, table);
-//     return table;
-// }
-
 void type_check(AST* tree, sym_table* table) {
     table_to_string(table);
     std::cout << "\n\n";

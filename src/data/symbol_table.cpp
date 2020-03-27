@@ -11,11 +11,12 @@ void exit_scope(sym_table *table) {
 }
 
 symbol* get_symbol(sym_table *table, std::string id) {
-    for(long unsigned int i = table->scope_stack.size() - 1; i >= 0; i--) {
-        if( table->scope_stack[i]->count(id) > 0) {
-            return (*(table->scope_stack[i]))[id];
+    for (std::vector<scope*>::reverse_iterator it = table->scope_stack.rbegin(); it != table->scope_stack.rend(); it++) {
+        if((*it)->count(id) > 0) {
+            return (*(*it))[id];
         }
     }
+    
     return NULL;
 }
 
