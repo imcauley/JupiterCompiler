@@ -373,8 +373,8 @@ static void yynoreturn yy_fatal_error ( const char* msg  );
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
-#define YY_NUM_RULES 37
-#define YY_END_OF_BUFFER 38
+#define YY_NUM_RULES 38
+#define YY_END_OF_BUFFER 39
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -384,15 +384,15 @@ struct yy_trans_info
 	};
 static const flex_int16_t yy_accept[93] =
     {   0,
-        0,    0,   38,   36,    1,    1,   36,   36,   36,   15,
-       36,   27,   28,   13,   16,   31,   17,   14,   11,   32,
-       18,   26,   19,   35,   35,   35,   35,   35,   35,   35,
-       35,   35,   29,   36,   30,    1,   25,    0,    0,    0,
-        0,   22,   35,   33,   11,   20,   24,   21,   35,   35,
-       35,   35,    5,   35,   35,   35,   35,   35,   23,   12,
-       12,    0,   33,   35,   35,   35,   35,    2,   35,   35,
-       35,   35,    0,    0,   35,   35,    6,   35,   35,   10,
-        4,   35,    0,   35,    8,   35,    7,   34,   35,    9,
+        0,    0,   39,   37,    1,    1,   18,   37,   37,   15,
+       37,   28,   29,   13,   16,   32,   17,   14,   11,   33,
+       19,   27,   20,   36,   36,   36,   36,   36,   36,   36,
+       36,   36,   30,   37,   31,    1,   26,    0,    0,    0,
+        0,   23,   36,   34,   11,   21,   25,   22,   36,   36,
+       36,   36,    5,   36,   36,   36,   36,   36,   24,   12,
+       12,    0,   34,   36,   36,   36,   36,    2,   36,   36,
+       36,   36,    0,    0,   36,   36,    6,   36,   36,   10,
+        4,   36,    0,   36,    8,   36,    7,   35,   36,    9,
         3,    0
 
     } ;
@@ -521,10 +521,10 @@ static const flex_int16_t yy_chk[200] =
     } ;
 
 /* Table of booleans, true if rule could match eol. */
-static const flex_int32_t yy_rule_can_match_eol[38] =
+static const flex_int32_t yy_rule_can_match_eol[39] =
     {   0,
 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,     };
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,     };
 
 static yy_state_type yy_last_accepting_state;
 static char *yy_last_accepting_cpos;
@@ -928,105 +928,110 @@ YY_RULE_SETUP
 case 18:
 YY_RULE_SETUP
 #line 65 "./scanner/scan.l"
-{yylval.name = strdup(yytext); return LT;};
+{yylval.name = strdup(yytext); return NOT;};
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 66 "./scanner/scan.l"
-{yylval.name = strdup(yytext); return GT;};
+#line 67 "./scanner/scan.l"
+{yylval.name = strdup(yytext); return LT;};
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 67 "./scanner/scan.l"
-{yylval.name = strdup(yytext); return LTE;};
+#line 68 "./scanner/scan.l"
+{yylval.name = strdup(yytext); return GT;};
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 68 "./scanner/scan.l"
-{yylval.name = strdup(yytext); return GTE;};
+#line 69 "./scanner/scan.l"
+{yylval.name = strdup(yytext); return LTE;};
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
 #line 70 "./scanner/scan.l"
-{yylval.name = strdup(yytext); return AND;};
+{yylval.name = strdup(yytext); return GTE;};
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 71 "./scanner/scan.l"
-{yylval.name = strdup(yytext); return OR;};
+#line 72 "./scanner/scan.l"
+{yylval.name = strdup(yytext); return AND;};
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
 #line 73 "./scanner/scan.l"
-{yylval.name = strdup(yytext); return EQ;};
+{yylval.name = strdup(yytext); return OR;};
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 74 "./scanner/scan.l"
-{yylval.name = strdup(yytext); return NEQ;};
+#line 75 "./scanner/scan.l"
+{yylval.name = strdup(yytext); return EQ;};
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
 #line 76 "./scanner/scan.l"
-{yylval.name = strdup(yytext); return ASSIGNMENT;};
+{yylval.name = strdup(yytext); return NEQ;};
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
 #line 78 "./scanner/scan.l"
-{yylval.name = strdup(yytext); return OPEN_PAREN;};
+{yylval.name = strdup(yytext); return ASSIGNMENT;};
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 79 "./scanner/scan.l"
-{yylval.name = strdup(yytext); return END_PAREN;};
+#line 80 "./scanner/scan.l"
+{yylval.name = strdup(yytext); return OPEN_PAREN;};
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 80 "./scanner/scan.l"
-{yylval.name = strdup(yytext); return OPEN_BRACE;};
+#line 81 "./scanner/scan.l"
+{yylval.name = strdup(yytext); return END_PAREN;};
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 81 "./scanner/scan.l"
-{yylval.name = strdup(yytext); return END_BRACE;};
+#line 82 "./scanner/scan.l"
+{yylval.name = strdup(yytext); return OPEN_BRACE;};
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 82 "./scanner/scan.l"
-{yylval.name = strdup(yytext); return COMMA;};
+#line 83 "./scanner/scan.l"
+{yylval.name = strdup(yytext); return END_BRACE;};
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 83 "./scanner/scan.l"
-{yylval.name = strdup(yytext); return SEMICOLON;};
+#line 84 "./scanner/scan.l"
+{yylval.name = strdup(yytext); return COMMA;};
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
 #line 85 "./scanner/scan.l"
-/* do nothing */
+{yylval.name = strdup(yytext); return SEMICOLON;};
 	YY_BREAK
 case 34:
-/* rule 34 can match eol */
-YY_RULE_SETUP
-#line 86 "./scanner/scan.l"
-/*also do nothing*/
-	YY_BREAK
-case 35:
 YY_RULE_SETUP
 #line 87 "./scanner/scan.l"
-{yylval.name = strdup(yytext); return IDENTIFIER;};
+/* do nothing */
+	YY_BREAK
+case 35:
+/* rule 35 can match eol */
+YY_RULE_SETUP
+#line 88 "./scanner/scan.l"
+/*also do nothing*/
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
 #line 89 "./scanner/scan.l"
-{fprintf(stderr, "Unidentifed token: %s\nAt line %d\n", strdup(yytext), yylineno); exit(2);};
+{yylval.name = strdup(yytext); return IDENTIFIER;};
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
 #line 91 "./scanner/scan.l"
+{fprintf(stderr, "Unidentifed token: %s\nAt line %d\n", strdup(yytext), yylineno); exit(2);};
+	YY_BREAK
+case 38:
+YY_RULE_SETUP
+#line 93 "./scanner/scan.l"
 ECHO;
 	YY_BREAK
-#line 1029 "lex.yy.c"
+#line 1034 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2043,7 +2048,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 91 "./scanner/scan.l"
+#line 93 "./scanner/scan.l"
 
 
 // int main(int argc, char **argv)

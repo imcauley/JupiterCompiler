@@ -98,7 +98,8 @@ extern int yydebug;
     PARAM_LIST = 302,
     FORM_PARAM = 303,
     BLOCK = 304,
-    ROOT = 305
+    ROOT = 305,
+    EXPRESSION = 306
   };
 #endif
 
@@ -112,7 +113,7 @@ union YYSTYPE
   char *name;
   AST * tree;
 
-#line 116 "./parser/parse.tab.h" /* yacc.c:1910  */
+#line 117 "./parser/parse.tab.h" /* yacc.c:1910  */
 };
 
 typedef union YYSTYPE YYSTYPE;

@@ -97,6 +97,7 @@
 %token FORM_PARAM
 %token BLOCK
 %token ROOT
+%token EXPRESSION
 
 %type <tree> start;
 %type <tree> literal;
@@ -262,7 +263,7 @@ postfixexpression:
  ;
 
 unaryexpression:
-   NEG unaryexpression                                              {$$ = make_new_node(NEG, no_data, 1, $2);};
+   SUB unaryexpression                                              {$$ = make_new_node(NEG, no_data, 1, $2);};
  | NOT unaryexpression                                              {$$ = make_new_node(NOT, no_data, 1, $2);};
  | postfixexpression
  ;
@@ -313,7 +314,7 @@ assignment:
  ;
 
 expression:
-   assignmentexpression 
+   assignmentexpression                     {$$ = make_new_node(EXPRESSION, no_data, 1, $1);};
  ;
 %%
 

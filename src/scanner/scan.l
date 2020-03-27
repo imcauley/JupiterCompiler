@@ -62,6 +62,8 @@ str_literal \"(.|\0|\\0|\\b|\\n|\\|\\f|\\t|\\r|\\\"|\')+\"
 "+"                 {yylval.name = strdup(yytext); return ADD;};
 "-"                 {yylval.name = strdup(yytext); return SUB;};
 
+"!"                 {yylval.name = strdup(yytext); return NOT;};
+
 "<"                 {yylval.name = strdup(yytext); return LT;};
 ">"                 {yylval.name = strdup(yytext); return GT;};
 "<="                {yylval.name = strdup(yytext); return LTE;};

@@ -16,6 +16,7 @@ typedef struct symbol {
     std::string id;
     int type;
     int exp_type;
+    std::vector <int> arguments;
 } symbol;
 
 typedef std::map<std::string,symbol*> scope;

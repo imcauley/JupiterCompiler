@@ -11,7 +11,7 @@ void exit_scope(sym_table *table) {
 }
 
 symbol* get_symbol(sym_table *table, std::string id) {
-    for(int i = table->scope_stack.size() - 1; i >= 0; i--) {
+    for(long unsigned int i = table->scope_stack.size() - 1; i >= 0; i--) {
         if( table->scope_stack[i]->count(id) > 0) {
             return (*(table->scope_stack[i]))[id];
         }
@@ -33,7 +33,7 @@ bool add_symbol(sym_table *table, symbol *sym) {
 }
 
 bool type_exists(sym_table *table, int type) {
-    for(int i = table->scope_stack.size() - 1; i >= 0; i--) {
+    for(long unsigned int i = table->scope_stack.size() - 1; i >= 0; i--) {
         std::map<std::string, symbol*>::iterator it;
         for ( it = table->scope_stack[i]->begin(); it != table->scope_stack[i]->end(); it++ ){
             if(it->second->type == type) {
@@ -46,7 +46,7 @@ bool type_exists(sym_table *table, int type) {
 }
 
 void table_to_string(sym_table *table) {
-    for(int i = 0; i < table->scope_stack.size(); i++) {
+    for(long unsigned int i = 0; i < table->scope_stack.size(); i++) {
         std::cout << "=================\n";
         std::map<std::string, symbol*>::iterator it;
         for ( it = table->scope_stack[i]->begin(); it != table->scope_stack[i]->end(); it++ ){

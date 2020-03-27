@@ -78,3 +78,19 @@ std::string ast_to_string(AST* tree, int depth) {
     return output;
 }
 
+std::vector<AST*> filter_children(AST* tree, int type) {
+    std::vector<AST*> nodes;
+
+    if(tree->type == type) {
+        nodes.push_back(tree);
+    }
+
+    for(long unsigned int i = 0; i < tree->children.size(); i++) {
+        std::vector<AST*> subnodes = filter_children(tree->children[i], type);
+        if(subnodes.size() > 0) {
+            nodes.insert(nodes.end(), subnodes.begin(), subnodes.end());
+        }
+    }
+    return nodes;
+}
+
