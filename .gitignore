@@ -36,4 +36,7 @@
 *.out
 *.app
 
+./compiler
+*.wasm
+
 # End of https://www.gitignore.io/api/c++
