@@ -40,7 +40,7 @@ ${BIN_DIR}token_map.o:
 	python3 $(PARSER_DIR)convert_tokens.py
 	$(CC) $(CFLAGS) -c $(PARSER_DIR)token_map.c -o $(BIN_DIR)token_map.o
 
-$(BIN_DIR)main.o:		main.cpp
+$(BIN_DIR)main.o:	main.cpp
 		$(CC) $(CFLAGS) -c main.cpp -o $(BIN_DIR)main.o
 
 $(BIN_DIR)ast.o:	$(DATA_DIR)ast.cpp  ${BIN_DIR}token_map.o
@@ -52,7 +52,7 @@ $(BIN_DIR)semantics.o: $(DATA_DIR)semantics.cpp $(BIN_DIR)ast.o $(BIN_DIR)bison.
 $(BIN_DIR)symbol_table.o: $(DATA_DIR)symbol_table.cpp $(BIN_DIR)ast.o $(BIN_DIR)bison.o
 	$(CC) $(CFLAGS) -c $(DATA_DIR)symbol_table.cpp -o $(BIN_DIR)symbol_table.o
 
-$(BIN_DIR)codegen.o:	$(BIN_DIR)ast.o
+$(BIN_DIR)codegen.o:	$(GEN_DIR)codegen.cpp $(BIN_DIR)ast.o $(BIN_DIR)bison.o $(BIN_DIR)symbol_table.o
 	$(CC) $(CFLAGS) -c $(GEN_DIR)codegen.cpp -o $(BIN_DIR)codegen.o
 
 lex.o yac.o main.o	: $(HEAD_DIR)heading.h

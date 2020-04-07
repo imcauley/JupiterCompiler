@@ -5,7 +5,7 @@
 #include "parse.h"
 #include "semantics.h"
 #include "symbol_table.h"
-
+#include "codegen.h"
 
 // int yyparse(final_tree);
 
@@ -27,5 +27,7 @@ int main(int argc, char **argv)
   yyparse();
   type_check(final_tree, table);
 
+  generate_code(final_tree, table);
+  // test_function();
   return 0;
 }
