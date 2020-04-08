@@ -3,4 +3,6 @@
 #include "ast.h"
 
 void generate_code(AST *tree, sym_table *table);
-void test_function();
+void function_varaibles(AST *tree);
+void function_header(AST *dec);
+void expression_evaluation(AST *tree);
