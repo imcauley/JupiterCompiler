@@ -1,4 +1,5 @@
 #include "codegen.h"
+#include <fstream>
 #include <string.h>
 #include <iostream>
 #include <stdio.h>
@@ -8,6 +9,7 @@
 void generate_code(AST *tree, sym_table *table) {    
     if(tree->type == ROOT) {
         std::cout << "(module \n";
+        add_prologue(tree);
         for(long unsigned int i = 0; i < tree->children.size(); i++) {
             // TODO add global (global $g (import "js" "global") (mut i32))
             generate_code(tree->children[i], table);
@@ -147,6 +149,17 @@ void expression_evaluation(AST *tree) {
     // }
 }
 
+// Probably super insecure
+void add_prologue(AST *tree) {
+    ifstream myfile;
+    std::string line;
+    myfile.open ("./runtime/runtime.wat");
+    while (getline(myfile, line)) {
+      cout << line << '\n';
+    }
+    myfile.close();
+}
+
 void function_header(AST *dec) {
     AST *type = dec->children[0]->children[0];
     AST *declar = dec->children[0]->children[1];
@@ -155,7 +168,7 @@ void function_header(AST *dec) {
     if(declar->children.size() > 1) {
         AST *params = declar->children[1];
         for(long unsigned int i = 0; i < params->children.size(); i++) {
-            std::cout << "(param $" << params->children[i]->children[1]->data << " i32)";
+            std::cout << "(param $" << params->children[i]->children[1]->data << " i32) ";
         }
     }
 

@@ -1,4 +1,3 @@
-(module
   (import "host" "exit" (func $exit))
   (import "host" "getchar" (func $getchar (result i32)))
   (import "host" "putchar" (func $putchar (param i32)))
@@ -58,9 +57,8 @@
 
   ;; TODO add print string function
 
-  (func $main
-    i32.const 0    ;; 'A' in ASCII
-    call $printb
-  )
-  (start $main)
-)
+  ;; (func $main
+  ;;   i32.const 0    ;; 'A' in ASCII
+  ;;   call $printb
+  ;; )
+  ;; (start $main)

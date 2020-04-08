@@ -7,3 +7,4 @@ void function_varaibles(AST *tree);
 void function_header(AST *dec);
 void expression_evaluation(AST *tree);
 void function_call(AST *tree);
+void add_prologue(AST *tree);
