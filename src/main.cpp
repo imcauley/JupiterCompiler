@@ -26,7 +26,7 @@ int main(int argc, char **argv)
   
   yyparse();
 
-  cout << ast_to_string(final_tree, 0);
+  // cout << ast_to_string(final_tree, 0);
   type_check(final_tree, table);
 
   generate_code(final_tree, table);

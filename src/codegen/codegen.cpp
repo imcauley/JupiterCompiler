@@ -40,8 +40,20 @@ void generate_code(AST *tree, sym_table *table) {
         generate_code(tree->children[1], table);
         std::cout << ")\n";
     }
+    else if(tree->type == RETURN) {
+        if(tree->children.size() > 0) {
+            generate_code(tree->children[0], table);
+            std::cout << "return\n";
+        }
+    }
     else if(tree->type == FUNC_INVOKE) {
         function_call(tree);
+    }
+    else if(tree->type == IF) {
+        generate_code(tree->children[0], table);
+        std::cout << "if\n";
+        generate_code(tree->children[1], table);
+        std::cout << "end\n";
     }
     else {
         for(long unsigned int i = 0; i < tree->children.size(); i++) {
@@ -57,7 +69,7 @@ void function_call(AST *tree) {
             expression_evaluation(params->children[i]);
         }
     }
-    std::cout << "(call $" << tree->children[0]->data << ")";
+    std::cout << "(call $" << tree->children[0]->data << ")\n";
 }
 
 void expression_evaluation(AST *tree) {
@@ -164,7 +176,7 @@ void function_header(AST *dec) {
     AST *type = dec->children[0]->children[0];
     AST *declar = dec->children[0]->children[1];
 
-    std::cout << "(func ";
+    std::cout << "(func $" << declar->children[0]->data << " ";
     if(declar->children.size() > 1) {
         AST *params = declar->children[1];
         for(long unsigned int i = 0; i < params->children.size(); i++) {
