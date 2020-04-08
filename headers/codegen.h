@@ -6,3 +6,4 @@ void generate_code(AST *tree, sym_table *table);
 void function_varaibles(AST *tree);
 void function_header(AST *dec);
 void expression_evaluation(AST *tree);
+void function_call(AST *tree);

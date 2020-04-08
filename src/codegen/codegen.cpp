@@ -1,6 +1,7 @@
 #include "codegen.h"
+#include <string.h>
 #include <iostream>
-
+#include <stdio.h>
 
 // using namespace std;
 
@@ -37,11 +38,24 @@ void generate_code(AST *tree, sym_table *table) {
         generate_code(tree->children[1], table);
         std::cout << ")\n";
     }
+    else if(tree->type == FUNC_INVOKE) {
+        function_call(tree);
+    }
     else {
         for(long unsigned int i = 0; i < tree->children.size(); i++) {
             generate_code(tree->children[i], table);
         }
     }
+}
+
+void function_call(AST *tree) {
+    if (tree->children.size() > 1) {
+        AST *params = tree->children[1];
+        for(long unsigned int i = 0; i < params->children.size(); i++) {
+            expression_evaluation(params->children[i]);
+        }
+    }
+    std::cout << "(call $" << tree->children[0]->data << ")";
 }
 
 void expression_evaluation(AST *tree) {
@@ -82,6 +96,49 @@ void expression_evaluation(AST *tree) {
     else if(tree->type == NEG) {
          expression_evaluation(tree->children[0]);
          std::cout << "i32.rem_s\n";
+    }
+    else if(tree->type == FUNC_INVOKE) {
+        function_call(tree);
+    }
+
+    // COMPARISONS
+    else if(tree->type == LT) {
+        expression_evaluation(tree->children[0]);
+        expression_evaluation(tree->children[1]);
+        std::cout << "i32.lt_s\n";
+    }
+    else if(tree->type == GT) {
+        expression_evaluation(tree->children[0]);
+        expression_evaluation(tree->children[1]);
+        std::cout << "i32.gt_s\n";
+    }
+    else if(tree->type == LTE) {
+        expression_evaluation(tree->children[0]);
+        expression_evaluation(tree->children[1]);
+        std::cout << "i32.le_s\n";
+    }
+    else if(tree->type == GTE) {
+        expression_evaluation(tree->children[0]);
+        expression_evaluation(tree->children[1]);
+        std::cout << "i32.ge_s\n";
+    }
+    else if(tree->type == EQ) {
+        expression_evaluation(tree->children[0]);
+        expression_evaluation(tree->children[1]);
+        std::cout << "i32.eq\n";
+    }
+    else if(tree->type == NEQ) {
+        expression_evaluation(tree->children[0]);
+        expression_evaluation(tree->children[1]);
+        std::cout << "i32.ne\n";
+    }
+    // BOOLEAN
+    else if(tree->type == BOOL) {
+        if(tree->data.compare("true") == 0) {
+            std::cout << "(i32.const 1)";
+        } else { 
+            std::cout << "(i32.const 0)";
+        }
     }
     // else {
     //     for(long unsigned int i = 0; i < tree->children.size(); i++) {

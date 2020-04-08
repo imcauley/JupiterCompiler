@@ -23,8 +23,10 @@ int main(int argc, char **argv)
 
   sym_table *table = new sym_table;
   open_scope(table);
-
+  
   yyparse();
+
+  cout << ast_to_string(final_tree, 0);
   type_check(final_tree, table);
 
   generate_code(final_tree, table);
