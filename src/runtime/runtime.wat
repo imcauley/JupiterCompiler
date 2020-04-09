@@ -1,3 +1,4 @@
+;; (module   
   (import "host" "exit" (func $exit))
   (import "host" "getchar" (func $getchar (result i32)))
   (import "host" "putchar" (func $putchar (param i32)))
@@ -47,18 +48,50 @@
       call $putchar
     end
   )
+
   (func $printc (param $char i32)
     (local.get $char)
     call $putchar
   )
+
+  (func $prints (param $string_index i32) (param $string_offeset i32)
+    (local $string_counter i32)
+    (local.get $string_index)
+    (local.set $string_counter)
+
+    (block $B
+      (loop $L
+      (local.get $string_counter)
+      (local.get $string_offeset)
+      (i32.eq)
+      br_if $B
+
+      (local.get $string_counter)
+      (i32.load)
+      (call $putchar)
+
+      (i32.const 1)
+      (local.get $string_counter)
+      (i32.add)
+      (local.set $string_counter)
+
+      br $L
+      )
+    )
+  )
+
   (func $halt
     call $exit
   )
 
-  ;; TODO add print string function
 
-  ;; (func $main
-  ;;   i32.const 0    ;; 'A' in ASCII
-  ;;   call $printb
-  ;; )
-  ;; (start $main)
+;;   (func $main
+;;     (i32.const 0)
+;;     (i32.const 6)
+;;     call $prints
+;;   )
+;;   (start $main)
+
+;;   (data (i32.const 0) "hello\n")
+;;   (memory 5)
+;; )
