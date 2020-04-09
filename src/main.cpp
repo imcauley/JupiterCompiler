@@ -26,10 +26,12 @@ int main(int argc, char **argv)
   
   yyparse();
 
+  BlockContext *bc = new BlockContext();
+  bc->counter = 0;
   // cout << ast_to_string(final_tree, 0);
   type_check(final_tree, table);
 
-  generate_code(final_tree, table);
+  generate_code(final_tree, bc);
   // test_function();
   return 0;
 }
