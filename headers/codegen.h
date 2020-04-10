@@ -2,11 +2,15 @@
 #include "symbol_table.h"
 #include "ast.h"
 #include <vector>
+#include "rtpreproc.h"
+
 
 typedef struct BlockContext {
     std::vector<int> stack;
     int counter;
 } BlockContext;
+
+void generate_program(AST *root, StringData *sd);
 
 void generate_code(AST *tree, BlockContext *table);
 void function_varaibles(AST *tree);

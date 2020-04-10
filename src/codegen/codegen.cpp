@@ -3,22 +3,29 @@
 #include <string.h>
 #include <iostream>
 #include <stdio.h>
+
 // using namespace std
 
 #define WA_FALSE "(i32.const 0)\n" 
 #define WA_TRUE "(i32.const 1)\n"
 
-void generate_code(AST *tree, BlockContext *block_state) {    
-    if(tree->type == ROOT) {
-        std::cout << "(module \n";
-        add_prologue(tree);
-        for(long unsigned int i = 0; i < tree->children.size(); i++) {
-            // TODO add global (global $g (import "js" "global") (mut i32))
-            generate_code(tree->children[i], block_state);
-        }
-        std::cout << "(start $__main)\n)\n";
+void generate_program(AST *root, StringData *sd) {
+    BlockContext *bc = new BlockContext();
+    bc->counter = 0;
+
+    std::cout << "(module \n";
+    add_prologue(root);
+    for(long unsigned int i = 0; i < root->children.size(); i++) {
+        generate_code(root->children[i], bc);
     }
-    else if(tree->type == ASSIGNMENT) {
+    std::cout << "(start $__main)\n";
+    std::cout << sd->total_strings;
+    std::cout << "(memory 10)";
+    std::cout << "\n)\n";
+}
+
+void generate_code(AST *tree, BlockContext *block_state) {    
+    if(tree->type == ASSIGNMENT) {
         expression_evaluation(tree->children[1]);
         std::cout << "(local.set $" << tree->children[0]->data << ")\n";
     }
@@ -164,6 +171,7 @@ void expression_evaluation(AST *tree) {
         expression_evaluation(tree->children[1]);
         std::cout << "i32.ne\n";
     }
+
     // BOOLEAN
     else if(tree->type == BOOL) {
         if(tree->data.compare("true") == 0) {
@@ -196,6 +204,15 @@ void expression_evaluation(AST *tree) {
         std::cout << WA_TRUE;
         std::cout << "end\n";
     }
+    else if (tree->type == NOT) {
+        expression_evaluation(tree->children[0]);
+        std::cout << "i32.eqz\n"
+                  << "if (result i32) \n"
+                  << WA_TRUE
+                  << "\nelse\n"
+                  << WA_FALSE
+                  << "\nend\n";
+    }    
     // else {
     //     for(long unsigned int i = 0; i < tree->children.size(); i++) {
     //         expression_evaluation(tree->children[i]);

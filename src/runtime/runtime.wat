@@ -48,12 +48,10 @@
       call $putchar
     end
   )
-
   (func $printc (param $char i32)
     (local.get $char)
     call $putchar
   )
-
   (func $prints (param $string_index i32) (param $string_offeset i32)
     (local $string_counter i32)
     (local.get $string_index)
@@ -79,7 +77,6 @@
       )
     )
   )
-
   (func $halt
     call $exit
   )

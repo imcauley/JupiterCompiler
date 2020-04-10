@@ -8,9 +8,9 @@ DATA_DIR = ./data/
 GEN_DIR = ./codegen/
 
 CC	= g++
-CFLAGS	= -DDEBUG -g -Wall -ansi -pedantic -I$(HEAD_DIR) -Wno-write-strings
+CFLAGS	= -DDEBUG -g -Wall -ansi -pedantic -I$(HEAD_DIR) -Wno-write-strings -std=c++11
 
-LOGIC = $(BIN_DIR)main.o $(BIN_DIR)bison.o $(BIN_DIR)lex.o $(BIN_DIR)semantics.o $(BIN_DIR)codegen.o
+LOGIC = $(BIN_DIR)main.o $(BIN_DIR)bison.o $(BIN_DIR)lex.o $(BIN_DIR)semantics.o $(BIN_DIR)codegen.o $(BIN_DIR)rtpreproc.o
 DATA = $(BIN_DIR)tokens.o $(BIN_DIR)ast.o $(BIN_DIR)token_map.o $(BIN_DIR)symbol_table.o
 
 OBJS = $(LOGIC) $(DATA)
@@ -52,8 +52,11 @@ $(BIN_DIR)semantics.o: $(DATA_DIR)semantics.cpp $(BIN_DIR)ast.o $(BIN_DIR)bison.
 $(BIN_DIR)symbol_table.o: $(DATA_DIR)symbol_table.cpp $(BIN_DIR)ast.o $(BIN_DIR)bison.o
 	$(CC) $(CFLAGS) -c $(DATA_DIR)symbol_table.cpp -o $(BIN_DIR)symbol_table.o
 
-$(BIN_DIR)codegen.o:	$(GEN_DIR)codegen.cpp $(BIN_DIR)ast.o $(BIN_DIR)bison.o $(BIN_DIR)symbol_table.o $(BIN_DIR)outbuffer.o
+$(BIN_DIR)codegen.o:	$(GEN_DIR)codegen.cpp $(BIN_DIR)ast.o $(BIN_DIR)bison.o $(BIN_DIR)symbol_table.o
 	$(CC) $(CFLAGS) -c $(GEN_DIR)codegen.cpp -o $(BIN_DIR)codegen.o
+
+$(BIN_DIR)rtpreproc.o:	$(GEN_DIR)rtpreproc.cpp $(BIN_DIR)ast.o $(BIN_DIR)bison.o $(BIN_DIR)symbol_table.o 
+	$(CC) $(CFLAGS) -c $(GEN_DIR)rtpreproc.cpp -o $(BIN_DIR)rtpreproc.o
 
 lex.o yac.o main.o	: $(HEAD_DIR)heading.h
 lex.o main.o bison.c 	: $(HEAD_DIR)tokens.h
