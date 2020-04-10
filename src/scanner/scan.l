@@ -23,7 +23,7 @@ alpha   [A-Za-z]
 dig     [0-9]
 
 
-identifier ({alpha}|_|\-)({alpha}|{dig}|_|\-)*
+identifier ({alpha}|_)({alpha}|{dig}|_)*
 
 int_mult_op (\*|\/|%)
 int_add_op (\+|\-)

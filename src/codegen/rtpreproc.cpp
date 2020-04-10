@@ -13,7 +13,7 @@ void proccess_strings(AST *root, StringData *sd) {
                 int length = tree->data.length();
 
                 char* offset_ptr = &(std::to_string(sd->offset)[0]);
-                char* length_ptr = &(std::to_string(length)[0]);
+                char* length_ptr = &(std::to_string(sd->offset + length)[0]);
                 AST *offset_data = make_new_node(NUMBER, offset_ptr, 0);
                 AST *length_data = make_new_node(NUMBER, length_ptr, 0);
 
@@ -45,9 +45,42 @@ void proccess_strings(AST *root, StringData *sd) {
 void add_runetime(sym_table *sym) {
     symbol* prints = new symbol();
     prints->id = string("prints");
-    prints->type = FUNC;
+    prints->type = VOID;
     prints->exp_type = FUNC;
     prints->arguments.push_back(INT_DEC);
     prints->arguments.push_back(INT_DEC);
     add_symbol(sym, prints);
+
+    symbol* printc = new symbol();
+    printc->id = string("printc");
+    printc->type = VOID;
+    printc->exp_type = FUNC;
+    printc->arguments.push_back(INT_DEC);
+    add_symbol(sym, printc);
+
+    symbol* printi = new symbol();
+    printi->id = string("printi");
+    printi->type = VOID;
+    printi->exp_type = FUNC;
+    printi->arguments.push_back(INT_DEC);
+    add_symbol(sym, printi);
+
+    symbol* printb = new symbol();
+    printb->id = string("printb");
+    printb->type = VOID;
+    printb->exp_type = FUNC;
+    printb->arguments.push_back(BOOL_DEC);
+    add_symbol(sym, printb);
+
+    symbol* halt = new symbol();
+    halt->id = string("halt");
+    halt->type = VOID;
+    halt->exp_type = FUNC;
+    add_symbol(sym, halt);
+
+    symbol* getchar = new symbol();
+    getchar->id = string("getchar");
+    getchar->type = INT_DEC;
+    getchar->exp_type = FUNC;
+    add_symbol(sym, getchar);
 }
