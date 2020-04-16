@@ -1,0 +1,10 @@
+(module 
+(func $__main
+(i32.const 0)
+(i32.const 17)
+(call $prints)
+)
+(start $__main)
+(data (i32.const 0) "Hello, world!\n")
+(memory 10)
+)

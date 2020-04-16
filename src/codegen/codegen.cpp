@@ -6,16 +6,26 @@
 
 // using namespace std
 
-#define WA_FALSE "(i32.const 0)\n" 
+#define WA_FALSE "(i32.const 0)\n"
 #define WA_TRUE "(i32.const 1)\n"
 
-void generate_program(AST *root, StringData *sd) {
+void generate_program(AST *root, StringData *sd)
+{
     BlockContext *bc = new BlockContext();
     bc->counter = 0;
 
     std::cout << "(module \n";
     add_prologue(root);
-    for(long unsigned int i = 0; i < root->children.size(); i++) {
+    for (long unsigned int i = 0; i < root->children.size(); i++)
+    {
+        if(root->children[i]->type == VAR_DEC) {
+            std::cout << "(global $";
+            std::cout << root->children[1]->data;
+            std::cout << " (mut i32) (i32.const 0))";
+        }
+    }
+    for (long unsigned int i = 0; i < root->children.size(); i++)
+    {
         generate_code(root->children[i], bc);
     }
     std::cout << "(start $__main)\n";
@@ -24,44 +34,55 @@ void generate_program(AST *root, StringData *sd) {
     std::cout << "\n)\n";
 }
 
-void generate_code(AST *tree, BlockContext *block_state) {    
-    if(tree->type == ASSIGNMENT) {
+void generate_code(AST *tree, BlockContext *block_state)
+{
+    if (tree->type == ASSIGNMENT)
+    {
         expression_evaluation(tree->children[1]);
         std::cout << "(local.set $" << tree->children[0]->data << ")\n";
     }
-    else if(tree->type == MAIN_FUNC) {
+    else if (tree->type == MAIN_FUNC)
+    {
         std::cout << "(func $__main\n";
         function_varaibles(tree);
-        for(long unsigned int i = 0; i < tree->children.size(); i++) {
+        for (long unsigned int i = 0; i < tree->children.size(); i++)
+        {
             generate_code(tree->children[i], block_state);
         }
         std::cout << ")\n";
     }
-    else if(tree->type == EXPRESSION) {
+    else if (tree->type == EXPRESSION)
+    {
         expression_evaluation(tree);
     }
-    else if(tree->type == FUNC_DEC) {
+    else if (tree->type == FUNC_DEC)
+    {
         function_header(tree);
         function_varaibles(tree);
         generate_code(tree->children[1], block_state);
         std::cout << ")\n";
     }
-    else if(tree->type == RETURN) {
-        if(tree->children.size() > 0) {
+    else if (tree->type == RETURN)
+    {
+        if (tree->children.size() > 0)
+        {
             generate_code(tree->children[0], block_state);
             std::cout << "return\n";
         }
     }
-    else if(tree->type == FUNC_INVOKE) {
+    else if (tree->type == FUNC_INVOKE)
+    {
         function_call(tree);
     }
-    else if(tree->type == IF) {
+    else if (tree->type == IF)
+    {
         generate_code(tree->children[0], block_state);
         std::cout << "if\n";
         generate_code(tree->children[1], block_state);
         std::cout << "end\n";
     }
-    else if(tree->type == WHILE) {
+    else if (tree->type == WHILE)
+    {
         int block_num = block_state->counter;
         block_state->counter++;
         block_state->stack.push_back(block_num);
@@ -77,110 +98,138 @@ void generate_code(AST *tree, BlockContext *block_state) {
         std::cout << ")\n)\n";
         block_state->stack.pop_back();
     }
-    else if(tree->type == BREAK) {
+    else if (tree->type == BREAK)
+    {
         std::cout << "br $B" << block_state->stack.back() << "\n";
     }
-    else {
-        for(long unsigned int i = 0; i < tree->children.size(); i++) {
+    else
+    {
+        for (long unsigned int i = 0; i < tree->children.size(); i++)
+        {
             generate_code(tree->children[i], block_state);
         }
     }
 }
 
-void function_call(AST *tree) {
-    if (tree->children.size() > 1) {
+void function_call(AST *tree)
+{
+    if (tree->children.size() > 1)
+    {
         AST *params = tree->children[1];
-        for(long unsigned int i = 0; i < params->children.size(); i++) {
+        for (long unsigned int i = 0; i < params->children.size(); i++)
+        {
             expression_evaluation(params->children[i]);
         }
     }
     std::cout << "(call $" << tree->children[0]->data << ")\n";
 }
 
-void expression_evaluation(AST *tree) {
-    if(tree->type == EXPRESSION) {
+void expression_evaluation(AST *tree)
+{
+    if (tree->type == EXPRESSION)
+    {
         expression_evaluation(tree->children[0]);
     }
-    else if(tree->type == NUMBER) {
+    else if (tree->type == NUMBER)
+    {
         std::cout << "(i32.const " << tree->data << ")\n";
     }
-    else if(tree->type == IDENTIFIER) {
+    else if (tree->type == IDENTIFIER)
+    {
         std::cout << "(local.get $" << tree->data << ")\n";
     }
-    else if(tree->type == ADD) {
-         expression_evaluation(tree->children[0]);
-         expression_evaluation(tree->children[1]);
-         std::cout << "i32.add\n";
+    else if (tree->type == ADD)
+    {
+        expression_evaluation(tree->children[0]);
+        expression_evaluation(tree->children[1]);
+        std::cout << "i32.add\n";
     }
-    else if(tree->type == SUB) {
-         expression_evaluation(tree->children[0]);
-         expression_evaluation(tree->children[1]);
-         std::cout << "i32.sub\n";
+    else if (tree->type == SUB)
+    {
+        expression_evaluation(tree->children[0]);
+        expression_evaluation(tree->children[1]);
+        std::cout << "i32.sub\n";
     }
-    else if(tree->type == MULT) {
-         expression_evaluation(tree->children[0]);
-         expression_evaluation(tree->children[1]);
-         std::cout << "i32.mul\n";
+    else if (tree->type == MULT)
+    {
+        expression_evaluation(tree->children[0]);
+        expression_evaluation(tree->children[1]);
+        std::cout << "i32.mul\n";
     }
-    else if(tree->type == DIV) {
-         expression_evaluation(tree->children[0]);
-         expression_evaluation(tree->children[1]);
-         std::cout << "i32.div_s\n";
+    else if (tree->type == DIV)
+    {
+        expression_evaluation(tree->children[0]);
+        expression_evaluation(tree->children[1]);
+        std::cout << "i32.div_s\n";
     }
-    else if(tree->type == MOD) {
-         expression_evaluation(tree->children[0]);
-         expression_evaluation(tree->children[1]);
-         std::cout << "i32.rem_s\n";
+    else if (tree->type == MOD)
+    {
+        expression_evaluation(tree->children[0]);
+        expression_evaluation(tree->children[1]);
+        std::cout << "i32.rem_s\n";
     }
-    else if(tree->type == NEG) {
-         expression_evaluation(tree->children[0]);
-         std::cout << "i32.rem_s\n";
+    else if (tree->type == NEG)
+    {
+        expression_evaluation(tree->children[0]);
+        std::cout << "i32.rem_s\n";
     }
-    else if(tree->type == FUNC_INVOKE) {
+    else if (tree->type == FUNC_INVOKE)
+    {
         function_call(tree);
     }
 
     // COMPARISONS
-    else if(tree->type == LT) {
+    else if (tree->type == LT)
+    {
         expression_evaluation(tree->children[0]);
         expression_evaluation(tree->children[1]);
         std::cout << "i32.lt_s\n";
     }
-    else if(tree->type == GT) {
+    else if (tree->type == GT)
+    {
         expression_evaluation(tree->children[0]);
         expression_evaluation(tree->children[1]);
         std::cout << "i32.gt_s\n";
     }
-    else if(tree->type == LTE) {
+    else if (tree->type == LTE)
+    {
         expression_evaluation(tree->children[0]);
         expression_evaluation(tree->children[1]);
         std::cout << "i32.le_s\n";
     }
-    else if(tree->type == GTE) {
+    else if (tree->type == GTE)
+    {
         expression_evaluation(tree->children[0]);
         expression_evaluation(tree->children[1]);
         std::cout << "i32.ge_s\n";
     }
-    else if(tree->type == EQ) {
+    else if (tree->type == EQ)
+    {
         expression_evaluation(tree->children[0]);
         expression_evaluation(tree->children[1]);
         std::cout << "i32.eq\n";
     }
-    else if(tree->type == NEQ) {
+    else if (tree->type == NEQ)
+    {
         expression_evaluation(tree->children[0]);
         expression_evaluation(tree->children[1]);
         std::cout << "i32.ne\n";
     }
 
     // BOOLEAN
-    else if(tree->type == BOOL) {
-        if(tree->data.compare("true") == 0) {
+    else if (tree->type == BOOL)
+    {
+        if (tree->data.compare("true") == 0)
+        {
             std::cout << WA_TRUE;
-        } else { 
+        }
+        else
+        {
             std::cout << WA_FALSE;
         }
     }
-    else if(tree->type == AND) {
+    else if (tree->type == AND)
+    {
         // A && B
         // Only evaluate B if A is true
         expression_evaluation(tree->children[0]);
@@ -192,7 +241,8 @@ void expression_evaluation(AST *tree) {
         std::cout << WA_FALSE;
         std::cout << "end\n";
     }
-    else if (tree->type == OR) {
+    else if (tree->type == OR)
+    {
         // A || B
         // Only evaluate B if A is false
         expression_evaluation(tree->children[0]);
@@ -204,7 +254,8 @@ void expression_evaluation(AST *tree) {
         std::cout << WA_TRUE;
         std::cout << "end\n";
     }
-    else if (tree->type == NOT) {
+    else if (tree->type == NOT)
+    {
         expression_evaluation(tree->children[0]);
         std::cout << "i32.eqz\n"
                   << "if (result i32) \n"
@@ -212,7 +263,7 @@ void expression_evaluation(AST *tree) {
                   << "\nelse\n"
                   << WA_FALSE
                   << "\nend\n";
-    }    
+    }
     // else {
     //     for(long unsigned int i = 0; i < tree->children.size(); i++) {
     //         expression_evaluation(tree->children[i]);
@@ -221,42 +272,131 @@ void expression_evaluation(AST *tree) {
 }
 
 // Probably super insecure
-void add_prologue(AST *tree) {
-    ifstream myfile;
-    std::string line;
-    myfile.open ("./runtime/runtime.wat");
-    while (getline(myfile, line)) {
-      cout << line << '\n';
-    }
-    myfile.close();
+
+void add_prologue(AST *tree)
+{
+    const std::string runtime = R"(
+  (import "host" "exit" (func $exit))
+  (import "host" "getchar" (func $getchar (result i32)))
+  (import "host" "putchar" (func $putchar (param i32)))
+
+  (func $printi (param $num i32)
+    (local.get $num)
+    (i32.const 0)
+    i32.ne
+    if
+        (local.get $num)
+        (i32.const 10)
+        i32.div_u
+        call $printi
+
+        (local.get $num)
+        (i32.const 10)
+        i32.rem_u
+
+        i32.const 48
+        i32.add 
+        call $putchar
+    end
+
+  )
+  (func $printb (param $bool i32) 
+    (local.get $bool)
+    i32.eqz
+    if
+      i32.const 116
+      call $putchar
+      i32.const 114
+      call $putchar
+      i32.const 117
+      call $putchar
+      i32.const 101
+      call $putchar
+    else
+      i32.const 102
+      call $putchar
+      i32.const 97
+      call $putchar
+      i32.const 108
+      call $putchar
+      i32.const 115
+      call $putchar
+      i32.const 101
+      call $putchar
+    end
+  )
+  (func $printc (param $char i32)
+    (local.get $char)
+    call $putchar
+  )
+  (func $prints (param $string_index i32) (param $string_offeset i32)
+    (local $string_counter i32)
+    (local.get $string_index)
+    (local.set $string_counter)
+
+    (block $B
+      (loop $L
+      (local.get $string_counter)
+      (local.get $string_offeset)
+      (i32.eq)
+      br_if $B
+
+      (local.get $string_counter)
+      (i32.load)
+      (call $putchar)
+
+      (i32.const 1)
+      (local.get $string_counter)
+      (i32.add)
+      (local.set $string_counter)
+
+      br $L
+      )
+    )
+  )
+  (func $halt
+    call $exit
+  )
+                  )";
+
+    std::cout << runtime;
 }
 
-void function_header(AST *dec) {
+void function_header(AST *dec)
+{
     AST *type = dec->children[0]->children[0];
     AST *declar = dec->children[0]->children[1];
 
-    
-    if(declar->children.size() > 1) {
+    if (declar->children.size() > 1)
+    {
         std::cout << "(func $" << declar->children[0]->data << " ";
         AST *params = declar->children[1];
-        for(long unsigned int i = 0; i < params->children.size(); i++) {
+        for (long unsigned int i = 0; i < params->children.size(); i++)
+        {
             std::cout << "(param $" << params->children[i]->children[1]->data << " i32) ";
         }
-    } else { 
+    }
+    else
+    {
         std::cout << "(func $" << declar->data << " ";
     }
     std::cout << "\n";
-    if(type->type != VOID ) {
+    if (type->type != VOID)
+    {
         std::cout << "(result i32)\n";
     }
 }
 
-void function_varaibles(AST *tree) {
-    if(tree->type == VAR_DEC) {
+void function_varaibles(AST *tree)
+{
+    if (tree->type == VAR_DEC)
+    {
         std::cout << "(local $" << tree->children[1]->data << " i32)\n";
     }
-    else {
-        for(long unsigned int i = 0; i < tree->children.size(); i++) {
+    else
+    {
+        for (long unsigned int i = 0; i < tree->children.size(); i++)
+        {
             function_varaibles(tree->children[i]);
         }
     }
