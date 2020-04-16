@@ -5,32 +5,37 @@
 void proccess_strings(AST *root, StringData *sd) {
     bool recurse = true;
     if(root->children.size() > 0) {
-        if(root->type == EXPRESSION) {
-            AST *tree = root->children[0];
-            if(tree->type == STRING) {
-                recurse = false;
-                
-                int length = tree->data.length();
+        if(root->type == ARG_LIST) {
+            if(root->children[0]->type == EXPRESSION) {            
+                AST *tree = root->children[0]->children[0];
+                if(tree->type == STRING) {
+                    recurse = false;
 
-                char* offset_ptr = &(std::to_string(sd->offset)[0]);
-                char* length_ptr = &(std::to_string(sd->offset + length)[0]);
-                AST *offset_data = make_new_node(NUMBER, offset_ptr, 0);
-                AST *length_data = make_new_node(NUMBER, length_ptr, 0);
+                    std::string hex = tree->data;
+                    
+                    int length = hex.length();
 
-                sd->offset += length;
+                    char* offset_ptr = &(std::to_string(sd->offset)[0]);
+                    char* length_ptr = &(std::to_string(sd->offset + length)[0]);
+                    AST *offset_data = make_new_node(NUMBER, offset_ptr, 0);
+                    AST *length_data = make_new_node(NUMBER, length_ptr, 0);
 
-                sd->total_strings += "(data (i32.const ";
-                sd->total_strings += offset_data->data;
-                sd->total_strings += ") ";
-                sd->total_strings += tree->data;
-                sd->total_strings += ")\n";
+                    sd->offset += length;
 
-                root->children.clear();
+                    sd->total_strings += "(data (i32.const ";
+                    sd->total_strings += offset_data->data;
+                    sd->total_strings += ") ";
+                    sd->total_strings += hex;
+                    sd->total_strings += ")\n";
 
-                root->type = ARG_LIST;
-                root->data = "no data";
-                add_child(root, offset_data);
-                add_child(root, length_data);
+                    root->children.clear();
+
+                    root->type = ARG_LIST;
+                    root->data = "no data";
+                    root->children.clear();
+                    add_child(root, offset_data);
+                    add_child(root, length_data);
+                }
             }
         }
     } 
@@ -39,6 +44,22 @@ void proccess_strings(AST *root, StringData *sd) {
             proccess_strings(root->children[i], sd);
         }
     }
+}
+
+std::string hex_string(std::string start) { 
+    std::string hex;
+    for(long unsigned int i = 1; ; i++) {
+        if(start[i] == '\"') {
+            break;
+        }
+        else if(start[i] == '\0') {
+            hex.append("\\u{0x00}");
+        } 
+        else {
+            hex.append(start, i, 1);
+        }
+    }
+    return hex;
 }
 
 

@@ -88,6 +88,14 @@ void generate_code(AST *tree, BlockContext *block_state)
         generate_code(tree->children[1], block_state);
         std::cout << "end\n";
     }
+    else if (tree->type == ELSE) {
+        generate_code(tree->children[0], block_state);
+        std::cout << "if\n";
+        generate_code(tree->children[1], block_state);
+        std::cout << "else\n";
+        generate_code(tree->children[2], block_state);
+        std::cout << "end\n";
+    }
     else if (tree->type == WHILE)
     {
         int block_num = block_state->counter;
@@ -246,8 +254,8 @@ void expression_evaluation(AST *tree, BlockContext *bc)
         // A && B
         // Only evaluate B if A is true
         expression_evaluation(tree->children[0], bc);
-        std::cout << WA_FALSE
-                  << "i32.ne\n";
+        std::cout << WA_TRUE
+                  << "i32.eq\n";
         std::cout << "if (result i32)\n";
         expression_evaluation(tree->children[1], bc);
         std::cout << "else\n";
@@ -345,15 +353,6 @@ void add_prologue(AST *tree)
     (local.get $bool)
     i32.eqz
     if
-      i32.const 116
-      call $putchar
-      i32.const 114
-      call $putchar
-      i32.const 117
-      call $putchar
-      i32.const 101
-      call $putchar
-    else
       i32.const 102
       call $putchar
       i32.const 97
@@ -361,6 +360,15 @@ void add_prologue(AST *tree)
       i32.const 108
       call $putchar
       i32.const 115
+      call $putchar
+      i32.const 101
+      call $putchar
+    else
+      i32.const 116
+      call $putchar
+      i32.const 114
+      call $putchar
+      i32.const 117
       call $putchar
       i32.const 101
       call $putchar
