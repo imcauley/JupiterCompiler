@@ -1,9 +1,26 @@
-;; (module   
   (import "host" "exit" (func $exit))
   (import "host" "getchar" (func $getchar (result i32)))
   (import "host" "putchar" (func $putchar (param i32)))
 
   (func $printi (param $num i32)
+    (local.get $num)
+    (i32.const 0)
+    (i32.lt_s)
+    if
+      (i32.const 45)
+      (call $putchar)
+
+      (local.get $num)
+      (i32.const -1)
+      (i32.mul)
+
+      call $printi_u
+    else
+      (local.get $num)
+      call $printi_u
+    end
+  )
+  (func $printi_u (param $num i32)
     (local.get $num)
     (i32.const 0)
     i32.ne
@@ -21,7 +38,6 @@
         i32.add 
         call $putchar
     end
-
   )
   (func $printb (param $bool i32) 
     (local.get $bool)
@@ -80,15 +96,3 @@
   (func $halt
     call $exit
   )
-
-
-;;   (func $main
-;;     (i32.const 0)
-;;     (i32.const 6)
-;;     call $prints
-;;   )
-;;   (start $main)
-
-;;   (data (i32.const 0) "hello\n")
-;;   (memory 5)
-;; )

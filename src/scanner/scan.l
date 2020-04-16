@@ -60,7 +60,7 @@ str_literal \"(.|\0|\\0|\\b|\\n|\\|\\f|\\t|\\r|\\\"|\'|ws)+\"
 "\""                  {
                     int t = 1;
                     int curr;
-                    char *str = (char *) malloc(256);
+                    char *str = (char *) malloc(256*7);
                     str[0] = '\"';
                     while((curr = yyinput()) != '\"') {
                         if(curr == '\0') {
