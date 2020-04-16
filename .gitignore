@@ -40,3 +40,6 @@
 *.wasm
 
 # End of https://www.gitignore.io/api/c++
+compiler
+.vscode/launch.json
+.vscode/settings.json
