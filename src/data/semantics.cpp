@@ -36,7 +36,6 @@ void type_check(AST* tree, sym_table* table) {
 
                 add_symbol(table, new_symbol);
             }
-
         }
         
         if(!is_main) {
@@ -336,6 +335,16 @@ int get_expression_type(sym_table *table, AST* tree) {
             exit(-1);
         }
         return INT_DEC;
+    }
+    else if(tree->type == ASSIGNMENT) {
+        int left_type = get_expression_type(table, tree->children[0]);
+        int right_type = get_expression_type(table, tree->children[1]);
+
+        if(left_type != right_type) {
+            fprintf(stderr, "Type mismatch\n");
+            exit(-1);
+        }
+        return left_type;
     }
     return -1;
 }

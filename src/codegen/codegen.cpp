@@ -3,6 +3,7 @@
 #include <string.h>
 #include <iostream>
 #include <stdio.h>
+#include <algorithm>
 
 // using namespace std
 
@@ -16,12 +17,15 @@ void generate_program(AST *root, StringData *sd)
 
     std::cout << "(module \n";
     add_prologue(root);
-    for (long unsigned int i = 0; i < root->children.size(); i++)
+    for (long unsigned int i = 0; i < root->children[0]->children.size(); i++)
     {
-        if(root->children[i]->type == VAR_DEC) {
+        AST *global_dec = root->children[0]->children[i];
+        if(global_dec->type == VAR_DEC) {
             std::cout << "(global $";
-            std::cout << root->children[1]->data;
-            std::cout << " (mut i32) (i32.const 0))";
+            std::cout << global_dec->children[1]->data;
+            std::cout << " (mut i32) (i32.const 0))\n";
+            
+            bc->globals.push_back(global_dec->children[1]->data);
         }
     }
     for (long unsigned int i = 0; i < root->children.size(); i++)
@@ -36,12 +40,7 @@ void generate_program(AST *root, StringData *sd)
 
 void generate_code(AST *tree, BlockContext *block_state)
 {
-    if (tree->type == ASSIGNMENT)
-    {
-        expression_evaluation(tree->children[1]);
-        std::cout << "(local.set $" << tree->children[0]->data << ")\n";
-    }
-    else if (tree->type == MAIN_FUNC)
+    if (tree->type == MAIN_FUNC)
     {
         std::cout << "(func $__main\n";
         function_varaibles(tree);
@@ -53,7 +52,12 @@ void generate_code(AST *tree, BlockContext *block_state)
     }
     else if (tree->type == EXPRESSION)
     {
-        expression_evaluation(tree);
+        expression_evaluation(tree, block_state);
+    } 
+    else if (tree->type == ASSIGNMENT) {
+        expression_evaluation(tree, block_state);
+        std::cout << "(drop)\n";
+
     }
     else if (tree->type == FUNC_DEC)
     {
@@ -72,7 +76,7 @@ void generate_code(AST *tree, BlockContext *block_state)
     }
     else if (tree->type == FUNC_INVOKE)
     {
-        function_call(tree);
+        function_call(tree, block_state);
     }
     else if (tree->type == IF)
     {
@@ -89,7 +93,7 @@ void generate_code(AST *tree, BlockContext *block_state)
         std::cout << "(block $B" << block_num << "\n"
                   << "(loop $L" << block_num << "\n";
 
-        expression_evaluation(tree->children[0]);
+        expression_evaluation(tree->children[0], block_state);
         std::cout << "i32.eqz\n"
                   << "br_if $B" << block_num << "\n";
 
@@ -111,24 +115,24 @@ void generate_code(AST *tree, BlockContext *block_state)
     }
 }
 
-void function_call(AST *tree)
+void function_call(AST *tree, BlockContext *bc)
 {
     if (tree->children.size() > 1)
     {
         AST *params = tree->children[1];
         for (long unsigned int i = 0; i < params->children.size(); i++)
         {
-            expression_evaluation(params->children[i]);
+            expression_evaluation(params->children[i], bc);
         }
     }
     std::cout << "(call $" << tree->children[0]->data << ")\n";
 }
 
-void expression_evaluation(AST *tree)
+void expression_evaluation(AST *tree, BlockContext *bc)
 {
     if (tree->type == EXPRESSION)
     {
-        expression_evaluation(tree->children[0]);
+        expression_evaluation(tree->children[0], bc);
     }
     else if (tree->type == NUMBER)
     {
@@ -136,83 +140,89 @@ void expression_evaluation(AST *tree)
     }
     else if (tree->type == IDENTIFIER)
     {
-        std::cout << "(local.get $" << tree->data << ")\n";
+        if (std::find(bc->globals.begin(), bc->globals.end(), tree->data) != bc->globals.end()) {
+            std::cout << "(global.get $" << tree->data << ")\n";
+        } else {
+            std::cout << "(local.get $" << tree->data << ")\n";
+        }
+        
     }
     else if (tree->type == ADD)
     {
-        expression_evaluation(tree->children[0]);
-        expression_evaluation(tree->children[1]);
+        expression_evaluation(tree->children[0], bc);
+        expression_evaluation(tree->children[1], bc);
         std::cout << "i32.add\n";
     }
     else if (tree->type == SUB)
     {
-        expression_evaluation(tree->children[0]);
-        expression_evaluation(tree->children[1]);
+        expression_evaluation(tree->children[0], bc);
+        expression_evaluation(tree->children[1], bc);
         std::cout << "i32.sub\n";
     }
     else if (tree->type == MULT)
     {
-        expression_evaluation(tree->children[0]);
-        expression_evaluation(tree->children[1]);
+        expression_evaluation(tree->children[0], bc);
+        expression_evaluation(tree->children[1], bc);
         std::cout << "i32.mul\n";
     }
     else if (tree->type == DIV)
     {
-        expression_evaluation(tree->children[0]);
-        expression_evaluation(tree->children[1]);
+        expression_evaluation(tree->children[0], bc);
+        expression_evaluation(tree->children[1], bc);
         std::cout << "i32.div_s\n";
     }
     else if (tree->type == MOD)
     {
-        expression_evaluation(tree->children[0]);
-        expression_evaluation(tree->children[1]);
+        expression_evaluation(tree->children[0], bc);
+        expression_evaluation(tree->children[1], bc);
         std::cout << "i32.rem_s\n";
     }
     else if (tree->type == NEG)
     {
-        expression_evaluation(tree->children[0]);
-        std::cout << "i32.rem_s\n";
+        std::cout << "(i32.const -1)\n";
+        expression_evaluation(tree->children[0], bc);
+        std::cout << "i32.mul\n";
     }
     else if (tree->type == FUNC_INVOKE)
     {
-        function_call(tree);
+        function_call(tree, bc);
     }
 
     // COMPARISONS
     else if (tree->type == LT)
     {
-        expression_evaluation(tree->children[0]);
-        expression_evaluation(tree->children[1]);
+        expression_evaluation(tree->children[0], bc);
+        expression_evaluation(tree->children[1], bc);
         std::cout << "i32.lt_s\n";
     }
     else if (tree->type == GT)
     {
-        expression_evaluation(tree->children[0]);
-        expression_evaluation(tree->children[1]);
+        expression_evaluation(tree->children[0], bc);
+        expression_evaluation(tree->children[1], bc);
         std::cout << "i32.gt_s\n";
     }
     else if (tree->type == LTE)
     {
-        expression_evaluation(tree->children[0]);
-        expression_evaluation(tree->children[1]);
+        expression_evaluation(tree->children[0], bc);
+        expression_evaluation(tree->children[1], bc);
         std::cout << "i32.le_s\n";
     }
     else if (tree->type == GTE)
     {
-        expression_evaluation(tree->children[0]);
-        expression_evaluation(tree->children[1]);
+        expression_evaluation(tree->children[0], bc);
+        expression_evaluation(tree->children[1], bc);
         std::cout << "i32.ge_s\n";
     }
     else if (tree->type == EQ)
     {
-        expression_evaluation(tree->children[0]);
-        expression_evaluation(tree->children[1]);
+        expression_evaluation(tree->children[0], bc);
+        expression_evaluation(tree->children[1], bc);
         std::cout << "i32.eq\n";
     }
     else if (tree->type == NEQ)
     {
-        expression_evaluation(tree->children[0]);
-        expression_evaluation(tree->children[1]);
+        expression_evaluation(tree->children[0], bc);
+        expression_evaluation(tree->children[1], bc);
         std::cout << "i32.ne\n";
     }
 
@@ -232,11 +242,11 @@ void expression_evaluation(AST *tree)
     {
         // A && B
         // Only evaluate B if A is true
-        expression_evaluation(tree->children[0]);
+        expression_evaluation(tree->children[0], bc);
         std::cout << WA_FALSE
                   << "i32.ne\n";
         std::cout << "if (result i32)\n";
-        expression_evaluation(tree->children[1]);
+        expression_evaluation(tree->children[1], bc);
         std::cout << "else\n";
         std::cout << WA_FALSE;
         std::cout << "end\n";
@@ -245,24 +255,33 @@ void expression_evaluation(AST *tree)
     {
         // A || B
         // Only evaluate B if A is false
-        expression_evaluation(tree->children[0]);
+        expression_evaluation(tree->children[0], bc);
         std::cout << WA_FALSE
                   << "i32.eq\n";
         std::cout << "if (result i32) \n";
-        expression_evaluation(tree->children[1]);
+        expression_evaluation(tree->children[1], bc);
         std::cout << "else\n";
         std::cout << WA_TRUE;
         std::cout << "end\n";
     }
     else if (tree->type == NOT)
     {
-        expression_evaluation(tree->children[0]);
+        expression_evaluation(tree->children[0], bc);
         std::cout << "i32.eqz\n"
                   << "if (result i32) \n"
                   << WA_TRUE
                   << "\nelse\n"
                   << WA_FALSE
                   << "\nend\n";
+    } else if (tree->type == ASSIGNMENT) {
+        expression_evaluation(tree->children[1], bc);
+        if (std::find(bc->globals.begin(), bc->globals.end(), tree->children[0]->data) != bc->globals.end()) {
+            std::cout << "(global.set $" << tree->children[0]->data << ")\n";
+            std::cout << "(global.get $" << tree->children[0]->data << ")\n";
+        } else {
+            std::cout << "(local.set $" << tree->children[0]->data << ")\n";
+            std::cout << "(local.get $" << tree->children[0]->data << ")\n";
+        }
     }
     // else {
     //     for(long unsigned int i = 0; i < tree->children.size(); i++) {
@@ -283,6 +302,24 @@ void add_prologue(AST *tree)
   (func $printi (param $num i32)
     (local.get $num)
     (i32.const 0)
+    (i32.lt_s)
+    if
+      (i32.const 45)
+      (call $putchar)
+
+      (local.get $num)
+      (i32.const -1)
+      (i32.mul)
+
+      call $printi_u
+    else
+      (local.get $num)
+      call $printi_u
+    end
+  )
+  (func $printi_u (param $num i32)
+    (local.get $num)
+    (i32.const 0)
     i32.ne
     if
         (local.get $num)
@@ -298,7 +335,6 @@ void add_prologue(AST *tree)
         i32.add 
         call $putchar
     end
-
   )
   (func $printb (param $bool i32) 
     (local.get $bool)
@@ -357,6 +393,7 @@ void add_prologue(AST *tree)
   (func $halt
     call $exit
   )
+
                   )";
 
     std::cout << runtime;

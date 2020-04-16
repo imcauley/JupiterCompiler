@@ -15,10 +15,17 @@ The program 'compiler' will be put in the main directory
 - Errors do not have line numbers
 
 ## Todo List
-TODO Compile time linking
-TODO Semantic Checking of runtime library
 TODO Global variables
-TODO Updated testing suite
 TODO Divion by Zero Error
-TODO Clean Up Project
+TODO printi negatives
 TODO Line nubmers of errors
+
+
+## Test Files Not Passing
+- t18
+- t22
+- t26
+- t29
+- t30
+- t33
+- t34
