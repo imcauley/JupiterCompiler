@@ -64,6 +64,7 @@ void generate_code(AST *tree, BlockContext *block_state)
         function_header(tree);
         function_varaibles(tree);
         generate_code(tree->children[1], block_state);
+        // std::cout << "return\n";
         std::cout << ")\n";
     }
     else if (tree->type == RETURN)
@@ -71,6 +72,8 @@ void generate_code(AST *tree, BlockContext *block_state)
         if (tree->children.size() > 0)
         {
             generate_code(tree->children[0], block_state);
+            std::cout << "return\n";
+        } else {
             std::cout << "return\n";
         }
     }
@@ -283,14 +286,8 @@ void expression_evaluation(AST *tree, BlockContext *bc)
             std::cout << "(local.get $" << tree->children[0]->data << ")\n";
         }
     }
-    // else {
-    //     for(long unsigned int i = 0; i < tree->children.size(); i++) {
-    //         expression_evaluation(tree->children[i]);
-    //     }
-    // }
 }
 
-// Probably super insecure
 
 void add_prologue(AST *tree)
 {
@@ -302,19 +299,27 @@ void add_prologue(AST *tree)
   (func $printi (param $num i32)
     (local.get $num)
     (i32.const 0)
-    (i32.lt_s)
+    (i32.eq)
     if
-      (i32.const 45)
-      (call $putchar)
-
-      (local.get $num)
-      (i32.const -1)
-      (i32.mul)
-
-      call $printi_u
+        (i32.const 48)
+        (call $putchar)
     else
-      (local.get $num)
-      call $printi_u
+        (local.get $num)
+        (i32.const 0)
+        (i32.lt_s)
+        if
+        (i32.const 45)
+        (call $putchar)
+
+        (local.get $num)
+        (i32.const -1)
+        (i32.mul)
+
+        call $printi_u
+        else
+        (local.get $num)
+        call $printi_u
+        end
     end
   )
   (func $printi_u (param $num i32)

@@ -23,9 +23,5 @@ TODO Line nubmers of errors
 
 ## Test Files Not Passing
 - t18
-- t22
-- t26
 - t29
 - t30
-- t33
-- t34

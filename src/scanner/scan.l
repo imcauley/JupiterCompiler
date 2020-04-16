@@ -10,6 +10,8 @@
     int mylineno = 0;
     int whitespace = 0;
     int all_characters = 0;
+    // {str_literal}       {yylval.name = strdup(yytext); return STRING;};
+
 %}
 
 %option yylineno
@@ -37,7 +39,7 @@ type    (int|boolean|void)
 
 bool_literal (true|false)
 int_literal {dig}+
-str_literal \"(.|\0|\\0|\\b|\\n|\\|\\f|\\t|\\r|\\\"|\')+\"
+str_literal \"(.|\0|\\0|\\b|\\n|\\|\\f|\\t|\\r|\\\"|\'|ws)+\"
 
 
 %%
@@ -54,7 +56,65 @@ str_literal \"(.|\0|\\0|\\b|\\n|\\|\\f|\\t|\\r|\\\"|\')+\"
 
 {bool_literal}      {yylval.name = strdup(yytext); return BOOL;};
 {int_literal}       {yylval.name = strdup(yytext); return NUMBER;};
-{str_literal}       {yylval.name = strdup(yytext); return STRING;};
+
+"\""                  {
+                    int t = 1;
+                    int curr;
+                    char *str = (char *) malloc(256);
+                    str[0] = '\"';
+                    while((curr = yyinput()) != '\"') {
+                        if(curr == '\0') {
+                            str[t] = '∖';
+                            str[t+1] = 'u';
+                            str[t+2] = '{';
+                            str[t+3] = '0';
+                            str[t+4] = 'x';
+                            str[t+5] = '0';
+                            str[t+6] = '0';
+                            str[t+7] = '}';
+                            t += 7;
+                        } 
+                        else if (curr == '\\') {
+                            curr = yyinput();
+                            if(curr == 'b') {
+                                str[t] = '∖';
+                                str[t+1] = 'u';
+                                str[t+2] = '{';
+                                str[t+3] = '0';
+                                str[t+4] = 'x';
+                                str[t+5] = '0';
+                                str[t+6] = '8';
+                                str[t+7] = '}';
+                                t += 7;
+                            } 
+                            else if(curr == 'f') {
+                                str[t] = '∖';
+                                str[t+1] = 'u';
+                                str[t+2] = '{';
+                                str[t+3] = '0';
+                                str[t+4] = 'x';
+                                str[t+5] = '0';
+                                str[t+6] = 'C';
+                                str[t+7] = '}';
+                                t += 7;
+                            } 
+                            else {
+                                str[t] = '\\';
+                                str[t+1] = curr;
+                                t += 1;
+                            }
+                        }
+                        else {
+                            str[t] = curr;
+                        }
+                        
+                        t += 1;
+                    }
+                    str[(t)] = '\"';
+                    str[t+1] = '\0';
+                    yylval.name = strdup(str); 
+                    return STRING;
+                    }
 
 "*"                 {yylval.name = strdup(yytext); return MULT;};
 "/"                 {yylval.name = strdup(yytext); return DIV;};

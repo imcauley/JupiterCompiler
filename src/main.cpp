@@ -29,9 +29,9 @@ int main(int argc, char **argv)
   open_scope (table);
 
   yyparse();
-
-  proccess_strings(final_tree, sd);
   // cout << ast_to_string(final_tree, 0);
+  proccess_strings(final_tree, sd);
+
   type_check(final_tree, table);
 
   generate_program(final_tree, sd);

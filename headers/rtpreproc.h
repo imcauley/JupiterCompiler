@@ -13,5 +13,6 @@ typedef struct StringData {
 
 void proccess_strings(AST *tree, StringData *sd);
 void add_runetime(sym_table *sym);
+std::string hex_string(std::string start);
 
 #endif

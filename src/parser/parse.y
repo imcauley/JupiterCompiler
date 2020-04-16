@@ -248,8 +248,10 @@ primary:
  ;
 
 argumentlist:
-   expression
- | argumentlist COMMA expression                                    {$$ = make_new_node(ARG_LIST, no_data, 2, $1, $3);};
+   expression                                                       {$$ = make_new_node(ARG_LIST, no_data, 1, $1);};
+ | argumentlist COMMA expression                                    {$$ = $1;
+                                                                      add_child($$, $3);
+                                                                     };
  ;
 
 functioninvocation:

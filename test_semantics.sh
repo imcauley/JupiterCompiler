@@ -6,8 +6,8 @@ NC='\033[0m'
 
 for f in ./testfiles/semantic/*
 do
-    echo ${f:12:256}
-    PF=${f:12:1}
+    echo ${f:21:256}
+    PF=${f:21:1}
     PASS=p
     FAIL=f
 

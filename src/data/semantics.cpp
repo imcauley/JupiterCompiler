@@ -74,9 +74,15 @@ void type_check(AST* tree, sym_table* table) {
         }
 
         for(long unsigned int i = 0; i < returns.size(); i++) {
-            if(function_type == VOID && returns[i]->children.size() > 0) {
-                fprintf(stderr, "None void return in void function\n");
-                exit(-1);
+            if(function_type == VOID) {
+                if (returns[i]->children.size() > 0) {
+                    fprintf(stderr, "None void return in void function\n");
+                    exit(-1);
+                }
+                if(returns[i]->children.size () > 0 && function_type == VOID) {
+                    fprintf(stderr, "Non void return in void function\n");
+                    exit(-1);
+                }
             }
             else {
                 if(returns[i]->children.size() == 0) {
@@ -105,28 +111,7 @@ void type_check(AST* tree, sym_table* table) {
         exit_scope(table);
     }
     else if(tree->type == FUNC_INVOKE) {
-        symbol *function_symbol = get_symbol(table, tree->children[0]->data);
-        if(function_symbol->exp_type == FUNC_MAIN) {
-            fprintf(stderr, "Cannot call main function\n");
-            exit(-1);        
-        }
-
-        std::vector<int> arguments;
-        if(tree->children.size() > 1) {
-            arguments = formal_list_to_type(table, tree->children[1]);
-        }
-
-        if(arguments.size() != function_symbol->arguments.size()) {
-            fprintf(stderr, "Wrong number of arguments\n");
-            exit(-1);    
-        }
-
-        for(long unsigned int i = 0; i < arguments.size(); i++) {
-            if(arguments[i] != function_symbol->arguments[i]) {
-                fprintf(stderr, "Wrong argument type\n");
-                exit(-1);    
-            }
-        }
+        get_expression_type(table, tree);
     }
     else if(tree->type == IF || tree->type == ELSE || tree->type == WHILE) {
         //type checking conditional
